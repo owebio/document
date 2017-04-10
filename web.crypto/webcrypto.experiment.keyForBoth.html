@@ -31,6 +31,7 @@
     /*word-wrap: break-all;
     white-space: pre-line;*/
   }
+  a {word-break:break-all}
   table tr.divide {border-bottom:8px solid #E5014D}
   #modifying-key-table {border:8px solid #E5014D}
   .log {margin:10px 0;padding:10px}
@@ -258,13 +259,22 @@
     <li> But key object contains it's name and hash info. </li>
     <li> It works fine to use one rsa key pair for encryption and signature by modifying key info.</li>
   </ul>
+  <h2>¶ Compatibility. </h2>
+  IE11 - CryptoOperation : <span id="check_CryptoOperation"></span>
+  <div>
+  <h2>¶ Updated. </h2>
+  <ul>
+    <li> 2017-04-10, MSIE11 can test singature with modified key pair.</li>
+  </ul>
+  </div>
 </div>
 
 
 
 <script>
+$("#check_CryptoOperation").html((window.CryptoOperation) ? "true" : "false");
 
-var _STL = window.crypto.subtle;
+var _STL = window.crypto.subtle || window.crypto.webkitSubtle;
 var mode, key, oPublicKey, oPrivateKey, jPublicKey, jPrivateKey;
 var exPublicKey, exPrivateKey, exRPublicKey, exRPrivateKey;
 
@@ -356,9 +366,10 @@ var importKey = function(key, type, func, errFunc) {
   .catch(errFunc);
 };
 
-var sign = function(privateKey, name, data, func, errFunc, saltLength) {
+var sign = function(privateKey, name, data, func, errFunc, hash, saltLength) {
   var _object = {name: name}; //"RSASSA-PKCS1-v1_5"
   if (saltLength) _object.saltLength = saltLength;
+  if (hash)       _object.hash = hash;
     _STL.sign(
       _object,
       privateKey,   //from generateKey or importKey above
@@ -367,9 +378,10 @@ var sign = function(privateKey, name, data, func, errFunc, saltLength) {
     .then(func)
     .catch(errFunc);
 };
-var verify = function(publicKey, name, signature, data, func, errFunc, saltLength) {
+var verify = function(publicKey, name, signature, data, func, errFunc, hash, saltLength) {
   var _object = {name: name}; //"RSASSA-PKCS1-v1_5"
   if (saltLength) _object.saltLength = saltLength;
+  if (hash)       _object.hash = hash;
   _STL.verify(
     _object, //"RSASSA-PKCS1-v1_5"
     publicKey,    //from generateKey or importKey above
@@ -535,6 +547,7 @@ $("#bt-sign").click(function(){
   var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
   var source = stringToBuffer($("#source").val());
   var saltLength = (name == "RSA-PSS") ? 128 : undefined;
+  var hash = "SHA-" + $("#opt-modifying-hash").val();
   $("#result").html('');
   sign(
     exRPrivateKey, name, source,
@@ -546,6 +559,7 @@ $("#bt-sign").click(function(){
       //console.log(err);
       //console.log(err.toString());
     },
+    hash,
     saltLength
   );//*/
 });
@@ -553,6 +567,7 @@ $("#bt-sign").click(function(){
 $("#bt-verify").click(function(){
   var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
   var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var hash = "SHA-" + $("#opt-modifying-hash").val();
   var signature = base64ToBuffer($("#data").html());
   var data = stringToBuffer($("#source").val());
   var saltLength = (name == "RSA-PSS") ? 128 : undefined;
@@ -566,6 +581,7 @@ $("#bt-verify").click(function(){
     function(err){
       console.log(err);
     },
+    hash,
     saltLength
   );
 });
