@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <title>Web Cryptography API - Signing Data</title>
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <script src="https://use.fontawesome.com/d1e0079ea8.js"></script>
+  <style>
+  @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css); /* 'Noto Sans KR' */
+  @import url(//fonts.googleapis.com/css?family=Roboto:100,400); /* 'Roboto' */
+
+  html, body {margin:0;padding:0;height:100%;}
+  table {width:100%;border-collapse:collapse;}
+  body  {font:14px/1.25 'Noto Sans KR', sans-serif}
+  #content {width:960px;margin:0 auto}
+  #log {padding:15px 0;}
+  </style>
+</head>
+<body>
+<div id="content">
+  <h1> Web Cryptography IE11 Test </h1>
+  <div id="log"></div>
+  <select id="algo">
+    <option value="RSASSA-PKCS1-v1_5">RSASSA-PKCS1-v1_5</option>
+    <option value="RSASSA-PSS">RSA-PSS</option>
+  </select>
+  <button id="bt-test">test</button>
+</div>
+  <script>
+$("#bt-test").click(function(){
+  log("test started!");
+  test();
+});
+var i = 0;
+var log = function(msg) {
+  $("<div>").html(++i + " : " + msg).appendTo($("#log"));
+}
+    // WARNING: The following code works only in IE11
+var pubKey;
+var privKey;
+
+var test = function() {
+    var algo = $("#algo").val();
+    var data = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]); // The data to be signed.
+    var encryptedData;
+    var decryptedData;
+    var crypto = window.crypto || window.msCrypto;
+
+    if (crypto.subtle) {
+      var genOp = crypto.subtle.generateKey(
+        { name: algo, modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]) },
+        false,
+        ["encrypt", "decrypt"]);
+
+      genOp.onerror = function (e) { log("genOp.onerror event handler fired."); }
+      genOp.oncomplete = function (e) {
+        pubKey = e.target.result.publicKey;
+        privKey = e.target.result.privateKey;
+
+        if (pubKey && privKey) {
+          log("generateKey "+algo+": PASS");
+        } else {
+          log("generateKey "+algo+": FAIL");
+        } // if-else
+
+        var signkey = crypto.subtle.sign({ name: algo, hash: "SHA-256" }, privKey, data);
+
+        signkey.onerror = function (evt) {
+          log("signkey.onerror event handler fired.");
+        }
+
+        signkey.oncomplete = function (evt) {
+          signature = evt.target.result;
+
+          if (signature) {
+            log("Sign with "+algo+" - SHA-256: PASS");
+          } else {
+            log("Sign with "+algo+" - SHA-256: FAIL");
+          }
+
+          var verifysig = crypto.subtle.verify({ name: algo, hash: "SHA-256"}, pubKey, signature, data);
+
+          verifysig.onerror = function (evt) {
+            log("Verify verifysig.onerror event handler fired.");
+          }
+
+          verifysig.oncomplete = function (evt) {
+            var verified = evt.target.result;
+
+            if (verified) {
+              log("Verify Operation for "+algo+" - SHA-256: PASS");
+            } else {
+              log("Verify Operation for "+algo+" - SHA-256: FAIL");
+            } // if-else
+          }; // verifysig.oncomplete
+        }; // signkey.oncomplete
+      }; // genOp.oncomplete
+    } else {
+      log("Unable to create window.crypto object");
+    } // if-else, (crypto.subtle)
+}
+
+  </script>
+</body>
+</html>
