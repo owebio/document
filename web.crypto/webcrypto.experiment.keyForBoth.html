@@ -155,7 +155,8 @@
   <h4>Compatibility issue : </h4>
   <ul>
     <li>RSA-PSS : NOT AVAILABLE ON <span class="red">MSIE11</span></li>
-    <li>RSAES-PKCS1-v1_5 : NOT AVAILABLE ON <span class="red">ALL BROWSERS</span></li>
+    <li>RSAES-PKCS1-v1_5 : NOT AVAILABLE ON <span class="red">ALL DESKTOP BROWSERS ON MS WINDOWS</span></li>
+    <li>RSAES-PKCS1-v1_5 : AVAILABLE ON MOBILE BROWSERS</li>
   </ul>
   <div id="key-generation-process" class="log">
   </div>
@@ -274,7 +275,7 @@
 <script>
 $("#check_CryptoOperation").html((window.CryptoOperation) ? "true" : "false");
 
-var _STL = window.crypto.subtle || window.crypto.webkitSubtle;
+var _STL = window.crypto.subtle;
 var mode, key, oPublicKey, oPrivateKey, jPublicKey, jPrivateKey;
 var exPublicKey, exPrivateKey, exRPublicKey, exRPrivateKey;
 
