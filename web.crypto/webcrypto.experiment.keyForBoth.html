@@ -1,0 +1,626 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title> Web Crypto Experiment : modified key usages</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9;"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/promiz/1.0.4/promiz.js"></script>
+  <link href="../assets/style.css" rel="stylesheet">
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <script src="https://use.fontawesome.com/d1e0079ea8.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+  <script src="../assets/webcrypto-shim.js"></script>
+  <style>
+  body {line-height:1.5}
+  h2 {margin:40px 0}
+  h3 {margin-top:40px}
+  table {width:100%;table-layout: fixed;}
+  table th {width:60px;background:#FCE6EE;color:#9A0134}
+  table th.r2 {width:20px;background:#FCB4D2;color:#500022}
+  table td {}
+  table td div {width:100%;white-space: nowrap;overflow:auto}
+  table td,
+  table th {padding:7px 5px;border:1px solid #E5014D; font:12px/16px consolas, courier, monospace}
+  .result-keygeneration {
+    /*word-wrap: break-all;
+    white-space: pre-line;*/
+  }
+  a {word-break:break-all}
+  table tr.divide {border-bottom:8px solid #E5014D}
+  #modifying-key-table {border:8px solid #E5014D}
+  .log {margin:10px 0;padding:10px}
+  .green {color:#08C502; font-weight: bold}
+  s, s a {color:#9E9E9E}
+  .desc {line-height: 28px;}
+  .keyType {padding:0 5px; border:2px solid #E5014D}
+  h3 {clear:both; font-size:20px;}
+  #fixedProgress {
+    position: fixed;
+    top: 30px;
+    left: auto; right: 30px;
+    margin-left: 250px;
+    width: 180px;
+    border: 3px solid #D2568A;
+    background: RGBA(255,255,255,0.75);
+    z-index: 1000;
+    padding: 10px;
+  }
+  #fixedProgress h3 {margin:0;}
+  #fixedProgress ol {margin:5px 0 0 0;padding:5px 0 0 14px}
+  #area-opt-modifying {margin:10px 0;padding:5px 10px; border:1px solid #FF1D2B}
+  option.sign {background:#EEF6F2}
+
+  #finalTest button {display:none}
+  #finalTest.mode_sign    button#bt-sign    {display:inline-block}
+  #finalTest.mode_sign    button#bt-verify  {display:inline-block}
+  #finalTest.mode_decrypt button#bt-decrypt {display:inline-block}
+  #finalTest.mode_decrypt button#bt-encrypt {display:inline-block}
+
+  #data {word-break:break-all}
+  #source {width:100%;box-sizing:border-box;margin:0 auto;padding:10px;}
+  .red {color:#E2120A}
+  #footer {padding: 50px 0;font-family:consolas,courier,monosopace;font-size:12px;color : #9E9E9E; text-align: center}
+
+  @media screen and (min-width: 960px)  {
+    #fixedProgress {
+      left: 50%; right: auto;
+      margin-left: 250px;
+    }
+  }
+
+  </style>
+</head>
+<body>
+<div id="fixedProgress">
+  <h3>Progress.</h3>
+  <ol>
+    <li> Generating keys.</li>
+    <li> Modifying keys.</li>
+    <li> Importing modified keys.</li>
+    <li> Testing modified keys.</li>
+  </ol>
+</div>
+<div id="content">
+
+  <h1>Web Crypto Experiment : RSA keys for both. </h1>
+
+  <h2>¶ Question. </h2>
+  <ul>
+    <li>Q. No problem to use same RSA key of web crypto for signature and encryption as PGP does? </li>
+  </ul>
+
+  <h2>¶ Test Condition.</h2>
+  <ul>
+    <li>Using <a href="https://www.w3.org/TR/WebCryptoAPI/">Web Cryptography API</a>. </li>
+    <li><s>On IE 11, Mobile IE 11, Safari 8+, iOS Safari 8+, shim for adapting old reference and other reason.</s>
+      <ul>
+        <li><s><a href="https://cdnjs.cloudflare.com/ajax/libs/promiz/1.0.4/promiz.js">promiz : https://cdnjs.cloudflare.com/ajax/libs/promiz/1.0.4/promiz.js</a></s></li>
+        <li><s><a href="https://github.com/vibornoff/webcrypto-shim">SHIM ver. : https://github.com/vibornoff/webcrypto-shim </a></s></li>
+      </ul>
+    </li>
+    <li>Exporting and Importing keys by JWK format. <a href="https://tools.ietf.org/html/rfc7517">[RFC-7517]</a> </li>
+    <li>Modifying two properties of JWK. [alg, key_ops] </li>
+    <li><span class="green">Chrome, Opera, Firefox,</span> <s>MSIE9-11, MS Edge</s> </li>
+  </ul>
+
+
+  <h2>¶ Exchanging RSA key test. </h2>
+
+  <h3> 1. RSA Key Generation </h3>
+
+<code>window.crypto.subtle.generateKey({</code> <br>
+&nbsp; &nbsp; · name :
+  <select id="key-generation-algo">
+    <option value="RSASSA-PKCS1-v1_5" class="sign">RSASSA-PKCS1-v1_5 </option>
+    <option value="RSA-PSS" class="sign">RSA-PSS </option>
+    <option value="RSAES-PKCS1-v1_5" class="red">RSAES-PKCS1-v1_5</option>
+    <option value="RSA-OAEP">RSA-OAEP</option>
+  </select>,<br>
+&nbsp; &nbsp; · modulusLength :
+  <select id="key-generation-modulusLength">
+    <option value="2048">2048</option>
+    <option value="4096">4096</option>
+    <option value="1024">1024</option>
+  </select>,<br>
+&nbsp; &nbsp; · publicExponent: new Uint8Array([0x01, 0x00, 0x01]) <br>
+&nbsp; &nbsp; · hash:
+  <select id="key-generation-hash"> <!--  {name: "SHA-256"} -->
+    <option value='{"name": "SHA-256"}'>{name: "SHA-256"}</option>
+    <option value='{"name": "SHA-384"}'>{name: "SHA-384"}</option>
+    <option value='{"name": "SHA-512"}'>{name: "SHA-512"}</option>
+    <option value='{"name": "SHA-1"}'>{name: "SHA-1"}</option>
+  </select>}, <br>
+· <select id="key-generation-extractable">
+    <option value='true'>true</option>
+    <option value='false'>false</option>
+  </select>,  - false | true : Whether the key is extractable (second argument) <br>
+· method :
+  <select id="key-generation-method">
+    <option value='["sign", "verify"]'>["sign", "verify"]</option>
+    <option value='["encrypt", "decrypt"]'>["encrypt", "decrypt"]</option>
+    <!--<option value='["sign"]'>["sign"]</option>
+    <option value='["verify"]'>["verify"]</option>
+    <option value='["decrypt"]'>["decrypt"]</option>
+    <option value='["encrypt"]'>["encrypt"]</option>
+    <option value='["sign", "verify", "encrypt", "decrypt"]'>["sign", "verify", "encrypt", "decrypt"]</option>-->
+  </select> <code>);</code> <br>
+
+  <button id="key-generation-button">Generate Keys.</button>
+  <h4>Compatibility issue : </h4>
+  <ul>
+    <li>RSA-PSS : NOT AVAILABLE ON <span class="red">MSIE11</span></li>
+    <li>RSAES-PKCS1-v1_5 : NOT AVAILABLE ON <span class="red">ALL DESKTOP BROWSERS ON MS WINDOWS</span></li>
+    <li>RSAES-PKCS1-v1_5 : AVAILABLE ON MOBILE BROWSERS</li>
+  </ul>
+  <div id="key-generation-process" class="log">
+  </div>
+  <div class="keys clr">
+    <div class="half">
+      <h4>Publick Key</h4>
+      <div id="key-generation-public" class="code result-keygeneration">
+        <table id="key-generation-public-table"></table>
+      </div>
+    </div>
+    <div class="half">
+      <h4>Private Key</h4>
+      <div id="key-generation-private" class="result-keygeneration">
+        <table id="key-generation-private-table"></table>
+      </div>
+    </div>
+    <div class="clr"></div>
+  </div>
+  <h3> 2. Modifying Keys </h3>
+  <p>Signature (or other crypto alg) « - » Encryption (or other sign alg)</p>
+  <p> Preparing same RSA keys for different algo. </p>
+  <div>
+    <div id="area-opt-modifying">
+      choose alg :
+      <select id="opt-modifying-algo">
+        <option value="RS">RSxxx (RSASSA-PKCS1-v1_5) - sign</option>
+        <option value="PS">PSxxx (RSA-PSS) - sign</option>
+        <option value="RSA1_5" class="red">RSA1_5 (RSAES-PKCS1-v1_5) - decrypt</option>
+        <option value="RSA-OAEP">RSA-OAEP-xxx (RSA-OAEP) - decrypt</option>
+      </select>
+      · Hash Option :
+      <select id="opt-modifying-hash">
+        <option value='256'>SHA-256</option>
+        <option value='384'>SHA-384</option>
+        <option value='512'>SHA-512</option>
+        <option value='1'>SHA-1</option>
+      </select>
+      <button id="bt-modifying-keys" style="margin-left:20px">Modifying Key pair (click)</button>
+      <div class="clr"></div>
+    </div>
+    <table id="modifying-key-table">
+      <tr>
+        <th rowspan="2" class="r2">
+          Generated Key pair
+        </th>
+        <th colspan="4">Private Key</th><th colspan="4">Public Key</th>
+      </tr>
+      <tr class="divide">
+        <th>alg</th><td id="ppralg" class="pp"></td>
+        <th>key_ops</th><td id="pprops" class="pp"></td>
+        <th>alg</th><td id="ppbalg" class="pp"></td>
+        <th>key_ops</th><td id="ppbops" class="pp"></td>
+      </tr>
+      <tr>
+        <th class="r2">
+          Modifying Key pair
+        </th>
+        <th>alg</th><td id="mpralg" class="pp"></td>
+        <th>key_ops</th><td id="mprops" class="pp"></td>
+        <th>alg</th><td id="mpbalg" class="pp"></td>
+        <th>key_ops</th><td id="mpbops" class="pp"></td>
+      </tr>
+    </table>
+  </div>
+  <h3> 3. Importing modified key pair </h3>
+  <button id="bt-importing-keys">Importing modified key pair </button>
+  <div class="keys clr">
+    <div class="half">
+      <h4>Modified Publick Key</h4>
+      <div id="key-modified-public" class="code result-keygeneration">
+        <table id="key-modified-public-table"></table>
+      </div>
+    </div>
+    <div class="half">
+      <h4>Modified Private Key</h4>
+      <div id="key-modified-private" class="result-keygeneration">
+        <table id="key-modified-private-table"></table>
+      </div>
+    </div>
+  </div>
+  <h3> 4. Final step : online modified key test. </h3>
+
+  <div id="finalTest" class="clr">
+    <h4>Source</h4>
+    <div>
+    <textarea id="source">hello</textarea>
+    </div>
+    <button id="bt-sign">Sign</button>
+    <button id="bt-encrypt">Encrypt</button>
+    <h4>Data</h4>
+    <div id="data" class="">
+    </div>
+    <button id="bt-verify">Verify</button>
+    <button id="bt-decrypt">Decrypt</button>
+    <div id="result" class="">
+    </div>
+  </div>
+  <h2>¶ Facts. </h2>
+  <ul>
+    <li> Generating rsa key pair of Web Cryptography has not been related with which algo you decided. </li>
+    <li> But key object contains it's name and hash info. </li>
+    <li> It works fine to use one rsa key pair for encryption and signature by modifying key info.</li>
+  </ul>
+  <h2>¶ Compatibility. </h2>
+  IE11 - CryptoOperation : <span id="check_CryptoOperation"></span>
+  <div>
+  <h2>¶ Updated. </h2>
+  <ul>
+    <li> 2017-04-10, MSIE11 can test singature with modified key pair.</li>
+  </ul>
+  </div>
+</div>
+
+
+
+<script>
+$("#check_CryptoOperation").html((window.CryptoOperation) ? "true" : "false");
+
+var _STL = window.crypto.subtle;
+var mode, key, oPublicKey, oPrivateKey, jPublicKey, jPrivateKey;
+var exPublicKey, exPrivateKey, exRPublicKey, exRPrivateKey;
+
+var generateKey = function(method) {
+  var method = JSON.parse($("#key-generation-method").val());
+  // INIT VALUE;
+  mode = key = oPublicKey = oPrivateKey = jPublicKey = jPrivateKey = undefined;
+  exPublicKey = exPrivateKey = exRPublicKey = exRPrivateKey = undefined;
+  log($("#key-generation-process"), 'clear');
+  $("#key-generation-public-table").empty();
+  $("#key-generation-private-table").empty();
+  $(".pp").html('');
+  // Starting Key generation.
+  log($("#key-generation-process"), 'starting key generation...');
+  var modeSelectedIndex = $("#key-generation-method")[0].selectedIndex;
+  mode = (modeSelectedIndex == 0) ? "sign" : (modeSelectedIndex == 1) ? "decrypt" : undefined;
+  var hashValue = $("#key-generation-hash").val();
+  _STL.generateKey(
+    {
+      name: $("#key-generation-algo").val(), //"RSASSA-PKCS1-v1_5"
+      modulusLength: $("#key-generation-modulusLength").val(), //can be 1024, 2048, or 4096
+      publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+      hash: (hashValue) ? JSON.parse(hashValue) : {name: ''}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+  },
+    ($("#key-generation-extractable").val() == "true") ? true : false,
+    //whether the key is extractable (i.e. can be used in exportKey) 비밀키 추출을 위해 true
+    JSON.parse($("#key-generation-method").val()) // ["sign", "verify"] can be any combination of "sign" and "verify"
+  )
+  .then(function(key){
+    log($("#key-generation-process"), 'got pair key!');
+    //returns a keypair object
+    key = key;
+    oPublicKey  = key.publicKey;
+    oPrivateKey = key.privateKey;
+    exportKey(oPrivateKey, "jwk", function(keyData) {
+      jPrivateKey = JSON.stringify(keyData);
+      var key = JSON.parse(jPrivateKey);
+      $("#ppralg").html(key.alg);
+      $("#pprops").html(key.key_ops);
+      keyInfoTable(key, $("#key-generation-private-table"));
+      log($("#key-generation-process"), 'Success!!! Private key is generated.');
+      checkIfKeyGenerated();
+    }, function(err){
+      log($("#key-generation-process"), 'ERROR! : to export private key ' + err);
+    });
+    exportKey(oPublicKey, "jwk", function(keyData) {
+      jPublicKey = JSON.stringify(keyData);
+      var key = JSON.parse(jPublicKey);
+      $("#ppbalg").html(key.alg);
+      $("#ppbops").html(key.key_ops);
+      keyInfoTable(key, $("#key-generation-public-table"));
+      log($("#key-generation-process"), 'Success!!! Public key is generated.');
+      checkIfKeyGenerated();
+    }, function(err){
+      log($("#key-generation-process"), 'ERROR! : to export public key ' + err);
+    });
+  })
+  .catch(function(err){
+    log($("#key-generation-process"), 'ERROR! : to get pair keys ' + err);
+  });
+};
+
+var exportKey = function(key, type, func, errFunc) {
+  var type = type || "jwk";
+  _STL.exportKey(
+    "jwk", //can be "jwk" (public or private), "spki" (public only), or "pkcs8" (private only)
+    key //can be a publicKey or privateKey, as long as extractable was true
+  )
+  .then(func).catch(errFunc);
+}
+
+var importKey = function(key, type, func, errFunc) {
+  var type = type || "jwk";
+  var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
+  var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var selectedHashIndex = $("#opt-modifying-hash")[0].selectedIndex;
+  var hash = $("#opt-modifying-hash option").eq(selectedHashIndex).html();
+  window.crypto.subtle.importKey(
+    "jwk", //can be "jwk" (public or private), "spki" (public only), or "pkcs8" (private only)
+    key,
+    {   //these are the algorithm options
+        name: name,
+        hash: {name: hash}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+    },
+    false, //whether the key is extractable (i.e. can be used in exportKey)
+    key.key_ops //"verify" for public key import, "sign" for private key imports
+  )
+  .then(func)
+  .catch(errFunc);
+};
+
+var sign = function(privateKey, name, data, func, errFunc, hash, saltLength) {
+  var _object = {name: name}; //"RSASSA-PKCS1-v1_5"
+  if (saltLength) _object.saltLength = saltLength;
+  if (hash)       _object.hash = hash;
+    _STL.sign(
+      _object,
+      privateKey,   //from generateKey or importKey above
+      data          //ArrayBuffer of data you want to sign
+    )
+    .then(func)
+    .catch(errFunc);
+};
+var verify = function(publicKey, name, signature, data, func, errFunc, hash, saltLength) {
+  var _object = {name: name}; //"RSASSA-PKCS1-v1_5"
+  if (saltLength) _object.saltLength = saltLength;
+  if (hash)       _object.hash = hash;
+  _STL.verify(
+    _object, //"RSASSA-PKCS1-v1_5"
+    publicKey,    //from generateKey or importKey above
+    signature,    //ArrayBuffer of the signature
+    data          //ArrayBuffer of the data
+  )
+  .then(func)
+  .catch(errFunc);
+}
+var encrypt = function(publicKey, name, data, func, errFunc) {
+  _STL.encrypt(
+    {
+       name: name, //"RSA-OAEP"
+       //label: Uint8Array([...]) //optional
+    },
+    publicKey, //from generateKey or importKey above
+    data //ArrayBuffer of data you want to encrypt
+  )
+  .then(func)
+  .catch(errFunc);
+}
+var decrypt = function(privateKey, name, data, func, errFunc) {
+  _STL.decrypt(
+    {
+       name: name, //"RSA-OAEP"
+       //label: Uint8Array([...]) //optional
+    },
+    privateKey, //from generateKey or importKey above
+    data //ArrayBuffer of data you want to encrypt
+  )
+  .then(func)
+  .catch(errFunc);
+}
+
+var stringToBuffer = function (str) {
+  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  var bufView = new Uint16Array(buf);
+  for (var i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+function bufferToString(buf) {
+  return String.fromCharCode.apply(null, new Uint16Array(buf));
+}
+var bufferToBase64 = function (buffer) {
+  var binary = '';
+  var bytes = new Uint8Array( buffer );
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+var base64ToBuffer = function (base64) {
+  var binary_string =  window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array( len );
+  for (var i = 0; i < len; i++)        {
+      bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
+var cloneJWK = function(type) {
+  if (type == "private") return JSON.parse(jPrivateKey);
+  if (type == "public") return JSON.parse(jPublicKey);
+}
+
+var checkIfKeyGenerated = function() {
+  if (oPublicKey && oPrivateKey && $("#key-generation-process").children().length == 4) {
+    log($("#key-generation-process"), 'Completed! All keys are ready!', 'green');
+  };
+  return false;
+}
+var keyInfoTable = function(key, parent) {
+  parent.empty();
+  Object.getOwnPropertyNames(key).forEach(function(e){
+    var tr = $("<tr>");
+    $("<th>").html(e).appendTo(tr);
+    $("<div>").addClass('json-value').html(key[e]).appendTo($("<td>").appendTo(tr));
+    tr.appendTo(parent)
+  });
+}
+var nameToAlg = function(name, hash) {
+}
+
+var algToName = function(alg) {
+}
+
+var log = function(parent, msg, className) {
+  if (msg == 'clear') return parent.empty() || this;
+  var length = parent.children().length + 1 || 1 ;
+  var _msg = $("<div>").html(length + " " + msg).appendTo(parent);
+  if (className) _msg.addClass(className);
+  return this;
+}
+
+$("#key-generation-button").click(generateKey);
+$("#bt-modifying-keys").click(function(){
+  if (!jPublicKey || !jPrivateKey) return true;
+  var alg, key_ops;
+  // Copying keys
+  exPrivateKey = cloneJWK('private');
+  exPublicKey  = cloneJWK('public');
+  var optType = $("#opt-modifying-algo").val();
+  var hashType = $("#opt-modifying-hash").val();
+  $("#data, #result").html('');
+  $("#key-modified-public-table, #key-modified-private-table").empty();
+  if (optType == "RS" || optType == "PS") {
+    alg     =  optType + hashType;
+    key_ops = ['sign', 'verify'];
+  } else if (optType == "RSA1_5") {
+    alg     =  optType ;
+    key_ops = ['decrypt', 'encrypt'];
+  } else if (optType == "RSA-OAEP") {
+    alg     =  optType + (( hashType == "1") ? "" : "-" + hashType )  ;
+    key_ops = ['decrypt', 'encrypt'];
+  }
+  // SETTING NEW PARAMETER;
+  exPrivateKey.alg     = alg;
+  exPrivateKey.key_ops = [key_ops[0]];
+  exPublicKey.alg      = alg;
+  exPublicKey.key_ops  = [key_ops[1]];
+  // HTML TABLE
+  $("#mpralg").html (alg);
+  $("#mprops").html (key_ops[0]);
+  $("#mpbalg").html (alg);
+  $("#mpbops").html (key_ops[1]);
+  $("#finalTest")[0].className = "mode_" + key_ops[0];
+});
+
+$("#bt-importing-keys").click(function() {
+  importKey(exPrivateKey, 'jwk',
+    function(keyData){
+      exRPrivateKey = keyData  ;
+      keyInfoTable(exPrivateKey, $("#key-modified-private-table"));
+    },
+    function(err) {
+      console.log(err);
+    }
+  );
+  importKey(exPublicKey, 'jwk',
+    function(keyData){
+      exRPublicKey = keyData;
+      keyInfoTable(exPublicKey, $("#key-modified-public-table"));
+    },
+    function(err) {
+      console.log(err);
+    }
+  );
+});
+
+$("#key-generation-algo").change(function(){
+  var selectedAlgoIndex = $("#key-generation-algo")[0].selectedIndex;
+  if (selectedAlgoIndex < 2) $("#key-generation-method").val('["sign", "verify"]');
+  else $("#key-generation-method").val('["encrypt", "decrypt"]');
+});
+
+$("#bt-sign").click(function(){
+  var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
+  var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var source = stringToBuffer($("#source").val());
+  var saltLength = (name == "RSA-PSS") ? 128 : undefined;
+  var hash = "SHA-" + $("#opt-modifying-hash").val();
+  $("#result").html('');
+  sign(
+    exRPrivateKey, name, source,
+    function(_signData){
+      $("#data").html(bufferToBase64(_signData));
+    },
+    function(err){
+      $("#data").html(err);
+      //console.log(err);
+      //console.log(err.toString());
+    },
+    hash,
+    saltLength
+  );//*/
+});
+
+$("#bt-verify").click(function(){
+  var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
+  var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var hash = "SHA-" + $("#opt-modifying-hash").val();
+  var signature = base64ToBuffer($("#data").html());
+  var data = stringToBuffer($("#source").val());
+  var saltLength = (name == "RSA-PSS") ? 128 : undefined;
+  // publicKey, name, signature, data, func, errFunc
+  verify(
+    exRPublicKey, name, signature, data,
+    function(result){
+      if (result === true) return $("#result").html("the signature is valid");
+      if (result === true) return $("#result").html("the signature is invalid");
+    },
+    function(err){
+      console.log(err);
+    },
+    hash,
+    saltLength
+  );
+});
+
+$("#bt-encrypt").click(function(){
+  var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
+  var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var source = stringToBuffer($("#source").val());
+  encrypt(
+    exRPublicKey, name, source,
+    function(data){
+      $("#data").html(bufferToBase64(data));
+    },
+    function(err){
+      console.log(err);
+    }
+  );
+});
+$("#bt-decrypt").click(function(){
+  var selectedAlgoIndex = $("#opt-modifying-algo")[0].selectedIndex;
+  var name = /\(([^)]+)\)/.exec( $("#opt-modifying-algo option").eq(selectedAlgoIndex).html())[1];
+  var data = base64ToBuffer($("#data").html());
+  decrypt(
+    exRPrivateKey, name, data,
+    function(data){
+      $("#result").html(bufferToString(data));
+    },
+    function(err){
+      console.log(err);
+    }
+  );
+});
+</script>
+
+<div id="footer">
+ oweb.io / oneiroi
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+/*
+
+  oneiroi.standard.style.css
+  2017-04-09
+
+*/
+
+@font-face {
+    font-family: "Dejavu Sans";
+    src: url("dejavu-sans-webfont.woff2") format('woff');
+}
+
+html, body, #zider {margin:0;padding:0;height:100%;}
+input, button {margin:0;padding:0;border:0}
+body  {font:100%/1.25 'Helvetica Neu', Arial, verdana,  'Zapf Dingbats', sans-serif;color:#242424}
+
+#zider {max-width:560px;margin:0 auto}
+#header {position:relative;padding:2em 0;margin:1.25em 0 0}
+#header {font-size:1.45em;font-weight:600;border-bottom:5px solid #383838}
+#header::before {position:absolute;top:0;left:0;content:"";width:30px;height:5px;background:#383838}
+#menu {
+  position:relative;display:flex;
+  justify-content:space-between;
+  padding:0.75em 0;
+  text-align:center;font-size:1.45em;line-height:42px;
+  border-bottom:1px solid #DFDFDF;
+  text-align:center;
+  margin: 0 0 0.75em;
+}
+
+#menu ul, .zider-remove-item,
+#menu li, .zider-remove-item li {margin:0;padding:0}
+#menu ul, .zider-remove-item {list-style:none;}
+
+#menu li {float:left;position:relative;width:42px;cursor:pointer;}
+#menu li:hover {background:#DFDFDF}
+#menu li.active {background: #515151; color:#EBEBEB;}
+#menu-main {flex:1}
+#menu-admin {}
+#menu-admin::before {position:absolute;top:-5px;right:0;content:"";width:84px;height:5px;background:#9E9E9E}
+#no_reqeust {position:absolute;z-index:10;top:-0.5em;right:-0.5em;font-size:0.6em; background:#F1000E;line-height:1.6em;width:1.6em;color:#F8DDE5;border-radius:50%}
+.zider-content {position:relative}
+.zider-remove-item {line-height:42px;font-size:1.5em;color:#9E9E9E}
+.zider-remove-item li {transition:all 300ms ease;padding:0.25em 0;display: table; cursor: pointer}
+.zider-remove-item li::before {display:inline-block;content:"\2218";width:2em;text-align:center;color:#9E9E9E}
+.zider-remove-item li:hover::before {content:"\0229A"}
+.zider-remove-item li:hover  {color:#3C3C3C}
+.zider-remove-item li.active {color:#F1000E}
+.zider-remove-item li.active::before {content:"\029BF";color:#F1000E}
+#zider-remove-hud {
+  position:absolute;right:1.5em;font-size:1.25em;top:50%;padding:0.75em 1.5em;transform:translate(0, -50%);
+  border:5px solid #E3E3E3;
+  transition:all 300ms ease;
+}
+#zider-remove-hud.active {border-color:#F1000E}
+#zider-remove-hud.active:hover  {box-shadow:0 0 1em #7D7D7D}
+#zider-remove-hud.active:hover {
+  transition:background 3000ms ease, color 3000ms ease, border-color 300ms 3000ms ease, box-shadow 300ms 3000ms ease, cursor 300ms 3000ms ease;
+  background:#E42641;color:#FEF2F4;
+  border-color:#611318; cursor: default;
+}
+#zider-remove-hud .notice {color: #7D7D7D}
+#zider-remove-hud.active .notice {color: #F1000E}
+#zider-remove-hud.active:hover .notice {color: #FCC004}
+#rm-title-cnt {font-size:0.75em}
+#footer {
+  margin-top:1.5em;
+  padding:3em 0; font:0.85em/1 consolas, courier, monospace; 
+  color:#9E9E9E;
+  text-align: center;
+  border-top:1px solid #DFDFDF;
+}
+
+#zider-remove-hud {right:1em}
+#title {margin-left:1em}
+
+@media screen and (min-width: 560px) {
+
+  #zider-remove-hud {right:1.5em}
+  #title {margin-left:0}
+
+}
+
+.zider-remove-item-icon {display:inline-block;width:42px;text-align:center}
+
+#test {display:none}
+.none {display:none}
+
+
+svg {
+  width: 42px;height: 42px;
+  fill: currentColor;vertical-align: top;
+}
