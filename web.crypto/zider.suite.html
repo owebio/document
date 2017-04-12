@@ -65,6 +65,7 @@
 </div>
 <h1>Zider Certification</h1>
 <div class="field">
+<!--
   <fieldset>
       <legend>Certification configuration :</legend>
   version :
@@ -92,7 +93,7 @@
   range :
     <input type="checkbox" disabled> only some sites <br>
     - above option is not ready, later it can be added.
-  </fieldset>
+  </fieldset> -->
   <p class="field">
     name     : <input id="opt-cert-name" placeholder="input name (4~10)">
     password : <input type="password" id="opt-cert-pass" placeholder="input password">
@@ -132,7 +133,7 @@
   </p>
 </div>
 <h1>Zider Verify</h1>
-  <textarea id="verify-source" class="full" placeholder="copy and paste it"></textarea>
+  <textarea id="verify-source" class="full" placeholder="copy and paste data from sign field"></textarea>
   <div id="output-verify" class="output">
   </div>
   <p>
@@ -149,7 +150,7 @@
 </div>
 <h1>Zider Decrypt</h1>
 <div class="field">
-  <textarea id="decrypt-text" class="full" placeholder="copy and paste it"></textarea>
+  <textarea id="decrypt-text" class="full" placeholder="copy and paste data from encrypt field"></textarea>
   <div id="decrypt-output" class="output">
   </div>
   <p>
@@ -170,14 +171,6 @@
   <td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td>
 </tr>
 </table>
-<h1>misc.</h1>
-<ul>
-  <li>IE11 - JWK object Type : ArrayBuffer</li>
-  <li>Mobile Chrome, Mobile Safari - JWK object Type : ArrayBuffer</li>
-  <li>Other morder browser on desktop - JWK : Object</li>
-  <li>Mobile Chrome, Mobile Safari - JWK Unsurpported RSA-OAEP-256 </li>
-  <li>IE11 &lt;-&gt; (Mobile) Browser and other mordern : different JWK properties </li>
-</ul>
 </div>
 
 <div id="footer">
