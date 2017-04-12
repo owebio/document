@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title> Zider Dev Suite </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9;"/>
+  <link href="../assets/zider.css" rel="stylesheet">
+  <script src="../assets/zider.dom.js"></script>
+  <script src="../assets/zider.core.js"></script>
+  <script src="../assets/zider.convert.js"></script>
+  <script src="../assets/zider.certification.js"></script>
+  <script src="../assets/zider.ui.js"></script>
+  <script src="../assets/pouchdb-6.1.2.min.js"></script>
+  <style>
+  h1 {font-size:1.45em}
+  h2 {font-size:1.35em}
+  .output {padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
+  button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
+  .half  > div {width:47%;float:left;padding-right:3%;}
+  .half  > div.clr, .clr {clear:both;float:none}
+  input {background:#f3f3f3;}
+  .field {line-height:1.5}
+  .field input {padding:5px}
+  .output > p {margin:1em;}
+  textarea.full {height:5em;width:100%;margin:1em auto;display:block;box-sizing:border-box;overflow:auto}
+  table {width:100%;border-collapse:collapse}
+  table th, table td {padding:5px;font:12px/18px sans-serif;text-align:center;border:1px solid #e0e0e0}
+  table th {font-weight:bold;background:#f3f3f3;}
+  </style>
+</head>
+<body>
+<div id="zider">
+<div id="header">
+  <div id="title">⚷ ZIDER DEV CORE SUITE</div>
+</div>
+<h1>Zider Neutral Key</h1>
+<div class="half">
+  <div>
+    <p>Zider Neutral Key Generate</p>
+    <div id="neutral-key-result" class="output"> </div>
+    <button id="bt-keyGenerate">zider.key.generate(func)</button>
+  </div>
+  <div>
+    <p>
+      Zider Key Loader -
+      <select id="opt-key-loader">
+        <option value="sign">sign</option>
+        <option value="verify">verify</option>
+        <option value="decrypt">decrypt</option>
+        <option value="encrypt">encrypt</option>
+      </select>
+    </p>
+    <div id="key-loader-result" class="output">
+      <p id="output-kl-algo"></p>
+      <p>
+        usage : <span id="output-kl-usage"></span>,
+        type  : <span id="output-kl-type"></span>
+      </p>
+    </div>
+    <button id="bt-key-loader">zider.key.load(ntrKey, method, fn)</button>
+  </div>
+  <div class="clr"></div>
+</div>
+<h1>Zider Certification</h1>
+<div class="field">
+  <fieldset>
+      <legend>Certification configuration :</legend>
+  version :
+  <select id="">
+    <option selected>v1</option>
+    <option disabled>v2</option>
+    <option disabled>v3</option>
+  </select>
+   · type :
+  <select>
+    <option selected>sole</option>
+    <option disabled>master</option>
+    <option disabled>slave</option>
+  </select>
+   · master-zid : <input disabled> <br>
+  object :
+  <select disabled>
+    <option selected>person</option>
+    <option>thing</option>
+    <option>site</option>
+  </select>
+   · method :
+    <input type="checkbox" checked disabled> all <input type="checkbox" disabled> login
+    <input type="checkbox" disabled> sign <br>
+  range :
+    <input type="checkbox" disabled> only some sites <br>
+    - above option is not ready, later it can be added.
+  </fieldset>
+  <p class="field">
+    name     : <input id="opt-cert-name" placeholder="input name (4~10)">
+    password : <input type="password" id="opt-cert-pass" placeholder="input password">
+  </p>
+  <div class="output">
+    <p>
+      • name    : <span id="cert-name"></span>
+      • version : <span id="cert-version"></span>
+      • time    : <span id="cert-time"></span>
+    </p>
+    <p> • hid  : <span id="cert-hid"></span></p>
+    <p> • nid  : <span id="cert-nid"></span></p>
+    <p> • signature  : <span id="cert-signature"></span></p>
+  </div>
+  <p>
+    <button id="bt-certification-create">zider.certification.create()</button>
+    , <span id="cert-duration"></span>ms
+  </p>
+</div>
+<h1>Zider Sign</h1>
+<div class="field">
+  method : <select id="opt-sign-method">
+    <option value="message">message</option>
+    <option disabled>login</option>
+  </select>
+  · type : <select id="opt-sign-type">
+    <option value="text">text</option>
+    <option disabled>json</option>
+    <option disabled>data</option>
+  </select>
+  <textarea id="opt-sign-text" class="full"></textarea>
+  <div id="sign-output" class="output">
+  </div>
+  <p>
+    <button id="bt-sign"><i>certification</i>.sign()</button>
+    , length - <span id="signed-message-length"></span>
+  </p>
+</div>
+<h1>Zider Verify</h1>
+  <textarea id="verify-source" class="full" placeholder="copy and paste it"></textarea>
+  <div id="output-verify" class="output">
+  </div>
+  <p>
+    <button id="bt-verify">zider.certification.verify()</button>
+  </p>
+<h1>Zider Encrypt</h1>
+<div class="field">
+  <textarea id="encrypt-text" class="full"></textarea>
+  <div id="encrypt-output" class="output">
+  </div>
+  <p>
+    <button id="bt-encrypt"><i>certification</i>.encrypt()</button>
+  </p>
+</div>
+<h1>Zider Decrypt</h1>
+<div class="field">
+  <textarea id="decrypt-text" class="full" placeholder="copy and paste it"></textarea>
+  <div id="decrypt-output" class="output">
+  </div>
+  <p>
+    <button id="bt-decrypt"><i>certification</i>.decrypt()</button>
+  </p>
+</div>
+
+<h1>Zider Compatibility</h1>
+<div>
+<table>
+<tr>
+  <th>type</th><th>IE10</th><th>IE11</th><th>Edge</th>
+  <th>Chrome</th><th>FF</th><th>Opera</th><th>Safari</th>
+  <th>M.Chr</th><th>M.Saf</th>
+</tr>
+<tr>
+  <th>All</th><td>X</td><td>O</td><td>O</td>
+  <td>O</td><td>O</td><td>O</td><td>O</td><td>O</td><td>O</td>
+</tr>
+</table>
+<h1>Solved issue</h1>
+<ul>
+  <li>IE11 - JWK object Type : ArrayBuffer</li>
+  <li>Mobile Chrome, Mobile Safari - JWK object Type : ArrayBuffer</li>
+  <li>Other morder browser on desktop - JWK : Object</li>
+  <li>Mobile Chrome, Mobile Safari - JWK Unsurpported RSA-OAEP-256 </li>
+  <li>IE11 &lt;-&gt; (Mobile) Browser and other mordern : different JWK properties </li>
+</ul>
+</div>
+
+<div id="footer">
+  oweb.io / oneiroi
+</div>
+
+</div>
+
+<script>
+var cert = undefined;
+var neutralKey = undefined;
+var realKey = undefined;
+$("#bt-keyGenerate").click(function(){
+  $("#neutral-key-result").html("INIT");
+  zider.key.generate(function(result){
+    neutralKey = result;
+    $("#neutral-key-result").html(JSON.stringify(result));
+  });
+});
+$("#bt-key-loader").click(function(){
+  var method = $("#opt-key-loader").val();
+  zider.key.load(neutralKey, method, function(_realKey){
+    realKey = _realKey;
+    $("#output-kl-algo").html(JSON.stringify(realKey.algorithm));
+    $("#output-kl-usage").html(realKey.usages && realKey.usages.join(','));
+    $("#output-kl-type").html(realKey.type);
+  });
+});
+$("#bt-certification-create").click(function(){
+  var start = new Date();
+  $("#cert-duration").html('...');
+  zider.certification.create($('#opt-cert-pass').val(), $("#opt-cert-name").val(), function(_cert){
+    cert = _cert;
+    $("#cert-name").html(cert.name);
+    $("#cert-version").html(cert.version);
+    $("#cert-time").html(cert.time);
+    $("#cert-hid").html(cert.hid);
+    $("#cert-nid").html(cert.nid);
+    $("#cert-signature").html(cert.signature);
+    $("#cert-duration").html( (new Date()) - start);
+  });
+});
+var signature = undefined;
+$("#bt-sign").click(function(){
+    $("#sign-output").html('');
+  cert.sign($("#opt-sign-method").val(), $("#opt-sign-type").val(), $("#opt-sign-text").val(), function(sign){
+    signature = sign;
+    var value = JSON.stringify(sign);
+    $("#sign-output").html(value);
+    $("#signed-message-length").html(value.length);
+  });
+});
+$("#bt-verify").click(function(){
+    $("#output-verify").html('');
+    var source = ($("#verify-source").val()).trim();
+    if (!source) return alert('copy above code and paste here...');
+    source = JSON.parse(source);
+    zider.certification.verify(source.signature, source.source, function(validation){
+    $("#output-verify").html(validation);
+  });
+});
+$("#bt-encrypt").click(function(){
+  var value = $("#encrypt-text").val().trim();
+  cert.encrypt(value, function(e){
+     $("#encrypt-output").html(e)
+  });
+});
+$("#bt-decrypt").click(function(){
+  var value = $("#decrypt-text").val().trim();
+  cert.decrypt(value, function(e){$("#decrypt-output").html(JSON.stringify(e))});
+});
+</script>
+</body>
+</html>
