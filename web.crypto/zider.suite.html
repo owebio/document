@@ -86,10 +86,6 @@
   </div>
 </div>
 <div class="clr"></div>
-<ul class="desc">
-  <li> v1 : current standard, mobile webkit does not support SHA-256 for en/decryption</li>
-  <li> v2 : using RSA-OAEP-256, for next version pending till mobile webkit browser's support.</li>
-</ul>
 <h1>Zider Certification</h1>
 <div class="field">
 <!--
@@ -126,8 +122,8 @@
       <option value="v1">v1</option>
       <option value="v2">v2</option>
     </select>
-    name     : <input id="opt-cert-name" placeholder="input name (4~10)">
-    password : <input type="password" id="opt-cert-pass" placeholder="input password">
+    • <input id="opt-cert-name" placeholder="NAME">
+    • <input type="password" id="opt-cert-pass" placeholder="PASSWORD">
   </p>
   <div class="output">
     <p>
@@ -155,7 +151,7 @@
     <option disabled>json</option>
     <option disabled>data</option>
   </select>
-  <textarea id="opt-sign-text" class="full"></textarea>
+  <textarea id="opt-sign-text" class="full" placeholder="MESSAGE"></textarea>
   <div id="sign-output" class="output okCopy"></div>
   <p>
     <button id="bt-sign"><i>certification</i>.sign()</button>
@@ -163,7 +159,7 @@
   </p>
 </div>
 <h1>Zider Verify</h1>
-  <textarea id="verify-source" class="full" placeholder="copy and paste data from sign field"></textarea>
+  <textarea id="verify-source" class="full" placeholder="SOURCE : {...}"></textarea>
   <div id="output-verify" class="output em1">
   </div>
   <p>
@@ -171,7 +167,7 @@
   </p>
 <h1>Zider Encrypt</h1>
 <div class="field">
-  <textarea id="encrypt-text" class="full"></textarea>
+  <textarea id="encrypt-text" class="full" placeholder="MESSAGE"></textarea>
   <div id="encrypt-output" class="output okCopy"></div>
   <p>
     <button id="bt-encrypt"><i>certification</i>.encrypt()</button>
@@ -179,7 +175,7 @@
 </div>
 <h1>Zider Decrypt</h1>
 <div class="field">
-  <textarea id="decrypt-text" class="full" placeholder="copy and paste data from encrypt field"></textarea>
+  <textarea id="decrypt-text" class="full" placeholder="SOURCE : {...}"></textarea>
   <div id="decrypt-output" class="output">
   </div>
   <p>
@@ -190,35 +186,35 @@
 <p>to check password validation without using it directly.</p>
 <div>Input text to hash </div>
 <p class="field">
-  <input id="bcrypt-input" class="full-line" placeholder="type password to generate hash">
+  <input id="bcrypt-input" class="full-line" placeholder="PASSWORD">
 </p>
 <div id="bcrypt-hash-output" class="output em1 okCopy"></div>
 <button id="bt-gen-bcrypt">generate Bcrypt's hash</button>
 <p>Input text to hash </p>
 <p class="field">
-  <input id="bcrypt-validation-text" class="full-line"  placeholder="type password to check hash">
+  <input id="bcrypt-validation-text" class="full-line"  placeholder="PASSWORD">
 </p>
 <p class="field">
-  <input id="bcrypt-validation-result" class="full-line" placeholder="paste hash here to check validation">
+  <input id="bcrypt-validation-result" class="full-line" placeholder="BCRYPT HASH: '$2a$10$...'">
 </p>
 <div id="bcrypt-hash-compare" class="output em1"></div>
 <button id="bt-check-bcrypt">check password</button>
 <h1>Misc. 2 - AES-CBC </h1>
 <p>AES-CBC ENCRYPTION</p>
 <div class="field">
-  <textarea id="aes-source-text" class="full" placeholder="message for encryption"></textarea>
+  <textarea id="aes-source-text" class="full" placeholder="MESSAGE"></textarea>
 </div>
 <p class="field">
-  <input id="aes-source-password" class="full-line"  placeholder="type password for encryption">
+  <input id="aes-source-password" class="full-line"  placeholder="PASSWORD">
 </p>
 <div id="aes-source-result" class="output okCopy"></div>
 <button id="bt-aes-encrypt">Encrypt with password</button>
 <p>AES-CBC DECRYPTION</p>
 <div class="field">
-  <textarea id="aes-d-source-text" class="full" placeholder="source for decryption: {....}"></textarea>
+  <textarea id="aes-d-source-text" class="full" placeholder="SOURCE: {....}"></textarea>
 </div>
 <p class="field">
-  <input id="aes-d-source-password" class="full-line"  placeholder="type password for decryption">
+  <input id="aes-d-source-password" class="full-line"  placeholder="PASSWORD">
 </p>
 <div id="aes-d-source-result" class="output"></div>
 <button id="bt-aes-d-encrypt">Decrypt with password</button>
@@ -257,8 +253,43 @@
 <ul class="desc">
   <li> About two mobile browsers, tested on only iphone (iOS). </li>
   <li> About desktop browsers, tested on only MS Windows (Win11). </li>
-  <li> Till now Mobile webkit browsers do not support SHA-256 on RSA-OAEP. </li>
+  <li> Now mobile webkit browsers(chrome, safari) do not support SHA-256 on RSA-OAEP. </li>
 </ul>
+</div>
+
+<h1>Zider version table</h1>
+<div>
+<table>
+<tr>
+  <th rowspan="2">ver</th>
+  <th colspan="2">Signature</th>
+  <th colspan="2">Encryption</th>
+  <th>other</th><th>misc</th>
+</tr>
+<tr>
+  <th>sign/verify</th><th>hash</th>
+  <th>encrypt/decrypt</th><th>hash</th>
+  <th>encrypt/decrypt</th><th>key derivation</th>
+</tr>
+<tr>
+  <th>v1</th>
+  <td>RSASSA-PKCS1-v1_5</td>
+  <td>256</td>
+  <td>RSA-OAEP</td>
+  <td>1</td>
+  <td>AES-CBC</td>
+  <td>BCRYPT</td>
+</tr>
+<tr>
+  <th>v2</th>
+  <td>〃</td>
+  <td>〃</td>
+  <td>〃</td>
+  <td>256</td>
+  <td>〃</td>
+  <td>〃</td>
+</tr>
+</table>
 </div>
 
 <div id="footer">
