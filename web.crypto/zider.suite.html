@@ -22,7 +22,7 @@
   .output.em1 {height:1.35em}
   button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
   .half  > div {width:47%;float:left;padding-right:3%;}
-  .half  > div.clr, .clr {clear:both;float:none}
+  .half  > div.clr, .clr {clear:both;float:none !important}
   .half select {float:right}
   i {color:#7D7D7D}
   input {background:#FAFFC1; border:1px solid #F4F6A7}
@@ -37,14 +37,15 @@
   input {width:7em}
   input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
   div.copied {
-    position:absolute;
+    position:fixed;
     background:RGBA(0,0,0,0.75);
-    color: #FE1010; line-height:1; font-size:14px;padding:7px 15px;
+    color: #FE1010; line-height:1; font-size:16px;padding:3em;
     top:50%;left:50%;
     transform:translate(-50%, -50%);
     border-radius: 5px;
   }
-  div.output.okCopy {border-right:5px solid #DF0000}
+  /*div.output.okCopy {border-right:5px solid #C2D4EA}
+  input.copyGhost {position:fixed;z-index:1;opacity:0.000001}*/
   </style>
 </head>
 <body>
@@ -83,14 +84,12 @@
     </div>
     <button id="bt-key-loader">zider.key.load()</button>
   </div>
-  <div class="clr"></div>
-  <p>
-    <ul class="desc">
-      <li> v1 : current standard, mobile webkit does not support SHA-256 for en/decryption</li>
-      <li> v2 : using RSA-OAEP-256, for next version pending till mobile webkit browser's support.</li>
-    </ul>
-  </p>
 </div>
+<div class="clr"></div>
+<ul class="desc">
+  <li> v1 : current standard, mobile webkit does not support SHA-256 for en/decryption</li>
+  <li> v2 : using RSA-OAEP-256, for next version pending till mobile webkit browser's support.</li>
+</ul>
 <h1>Zider Certification</h1>
 <div class="field">
 <!--
@@ -157,8 +156,7 @@
     <option disabled>data</option>
   </select>
   <textarea id="opt-sign-text" class="full"></textarea>
-  <div id="sign-output" class="output okCopy">
-  </div>
+  <div id="sign-output" class="output okCopy"></div>
   <p>
     <button id="bt-sign"><i>certification</i>.sign()</button>
      length - <span id="signed-message-length"></span>
@@ -174,8 +172,7 @@
 <h1>Zider Encrypt</h1>
 <div class="field">
   <textarea id="encrypt-text" class="full"></textarea>
-  <div id="encrypt-output" class="output okCopy">
-  </div>
+  <div id="encrypt-output" class="output okCopy"></div>
   <p>
     <button id="bt-encrypt"><i>certification</i>.encrypt()</button>
   </p>
@@ -208,21 +205,21 @@
 <button id="bt-check-bcrypt">check password</button>
 <h1>Misc. 2 - AES-CBC </h1>
 <p>AES-CBC ENCRYPTION</p>
+<div class="field">
+  <textarea id="aes-source-text" class="full" placeholder="message for encryption"></textarea>
+</div>
 <p class="field">
   <input id="aes-source-password" class="full-line"  placeholder="type password for encryption">
 </p>
-<div class="field">
-  <textarea id="aes-source-text" class="full" placeholder="message to encrypt"></textarea>
-</div>
 <div id="aes-source-result" class="output okCopy"></div>
 <button id="bt-aes-encrypt">Encrypt with password</button>
 <p>AES-CBC DECRYPTION</p>
-<p class="field">
-  <input id="aes-d-source-password" class="full-line"  placeholder="type password for decrytion">
-</p>
 <div class="field">
-  <textarea id="aes-d-source-text" class="full" placeholder="source to decrypt"></textarea>
+  <textarea id="aes-d-source-text" class="full" placeholder="source for decryption: {....}"></textarea>
 </div>
+<p class="field">
+  <input id="aes-d-source-password" class="full-line"  placeholder="type password for decryption">
+</p>
 <div id="aes-d-source-result" class="output"></div>
 <button id="bt-aes-d-encrypt">Decrypt with password</button>
 
@@ -261,6 +258,7 @@
   <li> About two mobile browsers, tested on only iphone (iOS). </li>
   <li> About desktop browsers, tested on only MS Windows (Win11). </li>
   <li> Till now Mobile webkit browsers do not support SHA-256 on RSA-OAEP. </li>
+</ul>
 </div>
 
 <div id="footer">
@@ -367,37 +365,6 @@ $("#bt-aes-d-encrypt").click(function(){
   catch (err) {
       $("#aes-d-source-result").html("Error : Wrong password or invalid format.");
   }
-});
-var copiedID = undefined;
-$(".output.okCopy").click(function(e){
-  var data = (this.innerText).trim();
-  if (!data) return this;
-  if (copiedID) {
-    $('.copied').remove();
-    clearTimeout(copiedID);
-    copiedID = undefined;
-  }
-  var copied = document.createElement("div");
-  copied.className = 'copied';
-  copied.innerHTML = "copied!";
-  var ghost = document.createElement("input");
-  ghost.style.position = 'fixed';
-  ghost.style.zIndex   = '-1';
-  document.body.append(ghost);
-  ghost.value = this.innerText;
-  ghost.select();
-  document.execCommand("copy");
-  ghost.blur();
-  this.append(copied);
-  copied.className += ' si';
-  copiedID = setTimeout(function(){
-    if (copiedID) {
-      $('.copied').remove();
-      clearTimeout(copiedID);
-      copiedID = undefined;
-    }
-  }, 1200);
-  ghost.parentNode.removeChild(ghost);
 });
 </script>
 </body>
