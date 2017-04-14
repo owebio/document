@@ -1,24 +1,22 @@
-
-
 var zider   = window.zider   || {};
 var _Crypto = window.crypto  || window.msCrypto || window.webitCrypto;
-var _ZTL    = _Crypto.subtle || _Crypto.webkitSubtle; //webkitSubtle - only mobile;
+var _ZTL    = _Crypto.subtle || _Crypto.webkitSubtle; // webkitSubtle - only mobile;
 
+// OLD SPEC : CryptoOperation, KeyOperation (IE11)
+// NEW SPEC : CryptoKey (Chrome, firefox)
 // ### zider's inner verion compatibility & dictionary
 zider.version = {
-  v1 : [ // Current standard version for most.  
+  v1 : [
     'RSASSA-PKCS1-v1_5', 'RSA-OAEP',     new Uint8Array([0x01, 0x00, 0x01]), 2048, 
     'RS256',             'RSA-OAEP',     'AQAB',
     'SHA-256',           'SHA-1'   
   ],
-  v2 : [ // Next standard version. [Mobile Webkit, now no support SHA-256 for encryption.]
+  v2 : [
     'RSASSA-PKCS1-v1_5', 'RSA-OAEP',     new Uint8Array([0x01, 0x00, 0x01]), 2048, 
     'RS256',             'RSA-OAEP-256', 'AQAB',
     'SHA-256',           'SHA-256' 
   ]
 };
-
-/* 0. Zider core utils */
 zider.dictionary = function(version, usage, type) {
   var dict = zider.version[version || 'v1'];
   var type = type || 'key'; // key | exec
@@ -34,87 +32,74 @@ zider.dictionary = function(version, usage, type) {
   };
   return undefined;
 };
-// ### Random seed : For Padding and Password
-zider.seed = function(size) {
+zider.seed = function(size) { // Random seed
   return _Crypto.getRandomValues(new Uint8Array(size));
 }
 // ### Normailization Callback - promise / event object.
-zider.fnCb = function(poe, cbFnc, encode) {
-  // [Normalization] Promise/Event Object(IE11)
-  // [Minimization ] then(oncomplete) and catch(onerror) as one functon.
-  // [Encoding     ] 
-  var result    = {value : undefined, error : undefined};
-  var convert   = zider.convert;
-  var base64    = convert.base64;
-  var base64url = convert.base64url;
-  var normalizeCBFunc = function(value, other) {
-    if (!result.error) {
+// [Normalization] New spec [Promise] vs old spec [Event Object, IE11]
+// [Minimization ] then(oncomplete) and catch(onerror) as one functon.
+// [IE11 BUG     ] IE11 never fires 'onerror', use try-catch statement.
+// [Encoding     ] very convenient if possible!
+// [CallbackFunc ] cbFunc(value, isError, other);
+zider.fn = function(method, arguments, cb, encode) {
+  var pseudoCB = function(v, e) {
+    if (e) console.log('zider.fn error : ' + method, e);
+    var value = (v && v.target && v.target.result/*IE11*/) || v;
+    try {
       switch (encode) {
-        case 'base64url' : result.value = base64url.encode(value); break;
-        case 'base64'    : result.value = base64.encode(value);    break;
-        case 'hex'       : result.value = convert.ab2hex(value);   break;
-        default          : result.value = value;
+        case 'base64url' : return cb.call(EXEC, zider.convert.base64url.encode(value));
+        case 'base64'    : return cb.call(EXEC, zider.convert.base64.encode(value));
+        case 'hex'       : return cb.call(EXEC, zider.convert.ab2hex(value));
       }
+    } catch (e) {
+      if (e) console.log('zider.fn encode error : ' + encode, e);
+      cb.call(EXEC, undefined, e);
     }
-    var _args = [result];
-    if (other) _args.push(other);
-    return cbFnc.apply({}, _args);
+    return cb.call(EXEC, value, e);
   };
-  if (poe.then) { // 1. Promise Object [Web Cryptography new spec.]
-    poe.then(normalizeCBFunc).catch(function(err) {
-      result.error = true; normalizeCBFunc(err);
-    });
-  } else {        // 2. Event Object [Web Cryptography old spec.] - MSIE11
-    poe.oncomplete = function(e) {normalizeCBFunc(e.target.result, e);};
-    poe.onerror    = function(e) {
-      result.error = true;
-      normalizeCBFunc(e.target.result, e);
-    };
-  };
+  try { // IE 11 BUG, onerror does not work.
+    var EXEC = _ZTL[method].apply(_ZTL, arguments); // _ZTL!
+    if (EXEC.then) return EXEC.then(pseudoCB).catch(function(e){pseudoCB(undefined, e)});
+    return  EXEC.oncomplete = pseudoCB;
+  } catch (e) {pseudoCB(undefined, e)};
 };
-// ### RSA Exec
+
 zider.RSA = function(neutralKey, method, signature, data, func, encode) {
   var exeDict = zider.dictionary(neutralKey.v, method, 'exec');
   zider.key.load(neutralKey, method, function(key){
     if (method == "verify") {
-      zider.fnCb(_ZTL.verify(
-        {name: exeDict.name, hash: exeDict.hash},
-        key, signature, data
-      ), function(r){func(r)}, encode);
+      zider.fn('verify', 
+        [{name: exeDict.name, hash: exeDict.hash}, key, signature, data]
+        , func, encode);
     } else {
-      zider.fnCb(_ZTL[method](
-        {name: exeDict.name, hash: exeDict.hash},
-        key, signature // signature -> func, func -> encode
-      ), function(r){data(r)}, func);
+      zider.fn(method, [{name: exeDict.name, hash: exeDict.hash}, key, signature], 
+        data, func); // signature -> func, func -> encode
     };
   });
 };
-// ### AES Exec
-zider.AES = function(method, password, vector, data, func, encode){
-  var UTF8      = zider.convert.UTF8.encode;
-  var base64url = zider.convert.base64url.decode;
-  var vector    = (typeof vector == 'string') ? base64url(vector) : vector;
-  if (method == 'encrypt') data = (typeof data == 'string') ? UTF8(data) : data;
-  else if (method == 'decrypt') data = (typeof data == 'string') ? base64url(data) : data;
-  if (typeof password == 'string') {
-    var _password = zider.convert.mergedAb(vector, UTF8(password));
-    return zider.hash(_password, function(hashPassword){
-      return zider.AES(method, hashPassword, vector, data, func, encode);
-    });
-  };
-  zider.fnCb(
-    _ZTL.importKey("raw", password, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]), 
-    function(r) {
-      zider.fnCb(
-        _ZTL[method]({name: "AES-CBC", iv: vector}, r.value/*key*/, data),
-        func, encode
-      );
+zider.AES = function(method, password, vector, data, func, encode) {
+  if (zider.convert) { // AUTO CONVERTING FOR STRING
+    var UTF8      = zider.convert.UTF8.encode;
+    var base64url = zider.convert.base64url.decode;
+    var vector    = (typeof vector == 'string') ? base64url(vector) : vector;
+    if (method == 'encrypt')      data = (typeof data == 'string') ? UTF8(data)      : data;
+    else if (method == 'decrypt') data = (typeof data == 'string') ? base64url(data) : data;
+    if (typeof password == 'string') {
+      var _password = zider.convert.mergedAb(vector, UTF8(password));
+      return zider.hash(_password, function(hashPassword){
+        return zider.AES(method, hashPassword, vector, data, func, encode);
+      });
+    };
+  }
+  zider.fn('importKey', 
+    ["raw", password, {name: "AES-CBC"}, false, ["encrypt", "decrypt"]], 
+    function(v, e) {
+      zider.fn(method, [{name: "AES-CBC", iv: vector}, v/*key*/, data], func, encode)
     }
   );
   return this;
 };
-
-/* 1. Legacy Crypto Key */
+/* KEY */
 zider.key = {};
 zider.key.neutralize = function(jwk, version) {
   return {
@@ -125,24 +110,22 @@ zider.key.neutralize = function(jwk, version) {
 };
 zider.key.generate = function(func, version) {
   var keyInfo = zider.dictionary(version, 'sign', 'exec');
-  zider.fnCb(_ZTL.generateKey( // #1. KEY GENERATION WITH OPTION
+  zider.fn('generateKey', [ // #1. KEY GENERATION WITH OPTION
     { name: keyInfo.name, modulusLength: keyInfo.modulusLength,
       publicExponent: keyInfo.publicExponent,
       hash: {name: keyInfo.hash} // On IE11, not necessary here but to sign to veryify later. 
     }, true, keyInfo.usage
-    ), function(r) { // #2. KEY EXPORTING, EXTRACT ONLY PRIVATE KEY TO NEUTRALIZE.
-      zider.fnCb(_ZTL.exportKey("jwk", r.value.privateKey), 
-        function(r) {
+    ], function(r, e) { // #2. KEY EXPORTING, EXTRACT ONLY PRIVATE KEY TO NEUTRALIZE.
+      zider.fn('exportKey', ["jwk", r.privateKey], 
+        function(r, e) {
           // ArrayBuffer type : MSIE11, MOBILE BROWSERS / EXCEPT DESKTOP MODERNS
-          var jwk = (window.CryptoKey) ? r.value : JSON.parse(zider.convert.ab2str(r.value, true));
+          var jwk = (window.CryptoKey) ? r : JSON.parse(zider.convert.ab2str(r, true));
           func(zider.key.neutralize(jwk, version));
         }
       );
     }
   );
 };
-// CONVERT KEY METHOD SIGN, VERIFY, ENCRYPT, DECRYPT FROM RSA INFO;
-// BUILD PROTOTYPE KEY
 zider.key.set = function(neutralKey, method, version) {
   var version = version || neutralKey.version || 'v1';
   var method  = method  || 'sign';
@@ -177,45 +160,24 @@ zider.key.load = function(key, method, func, version) {
   var method  = method  || 'sign';
   var exeDict = zider.dictionary(version, method, 'exec');
   var keyJWK  = zider.key.set(key, method, version);
-  zider.fnCb(_ZTL.importKey(
+  zider.fn('importKey', [
     "jwk", keyJWK, {name: exeDict.name, hash: {name: exeDict.hash}},
     false, exeDict.usage
-  ),
-  function(r) { // GET Real Key Object (r.value)
-    func(r.value, keyJWK);
-  });
+  ], func);
 };
-
-/* RSA SIGN/VERIFY */
-zider.sign = function(pseudoKey, data, func, encode) {
-  zider.RSA(pseudoKey, 'sign', data, function(r) {
-    func(r.value);
-  }, encode);
-};
-zider.verify = function(pseudoKey, signature, source, func) {
-  zider.RSA(pseudoKey, 'verify', signature, source, function(r) {
-    func(r.value);
-  });
-};
-// RSA ENCRYPT/DECRYPT
-zider.RSAEncrypt = function(pseudoKey, data, func, encode) {
-  zider.RSA(pseudoKey, 'encrypt', data, function(r) {
-    func(r.value);
-  }, encode);
-};
-zider.RSADecrypt = function(pseudoKey, data, func, encode) {
-  zider.RSA(pseudoKey, 'decrypt', data, function(r) {
-    func(r.value);
-  }, encode);
-};
+/* RSA SHORT FUNCTION - SIGN/VERIFY/ENCRYPT/DECRYPT   */
+("sign,verify,encrypt,decrypt").split(',').forEach(function(e){
+  zider.RSA[e] = function() {
+    // verify : pseudoKey, 'verify', signature, data, **func**
+    // other  : pseudoKey, 'sign', data, **func**, encode
+    var arg = Array.prototype.slice.call(arguments);
+    zider.RSA.apply(zider.RSA, arg.splice(1, 0, e) && arg);
+  };
+});
 /* HASH */
 zider.hash = function(data, func, algo, encode) {
-  zider.fnCb(
-    _ZTL.digest(algo || "SHA-256", data),
-    function(r) {func(r.value)}, encode
-  );
+  zider.fn('digest', [algo || "SHA-256", data], func, encode);
 };
-
 /* AES-CBC encryption/decryption */
 zider.encrypt = function(data, password, func, encode) {
   var vector    = zider.seed(16);
@@ -225,12 +187,10 @@ zider.encrypt = function(data, password, func, encode) {
     vector   : base64url(vector)
   };
   zider.AES('encrypt', password, vector, data, function(r) {
-    result.data = r.value;
+    result.data = r;
     func(result);
   }, encode || 'base64url');
 };
 zider.decrypt = function(data, vector, password, func, encode) {
-  zider.AES('decrypt', password, vector, data, function(r) {
-    func(r.value);
-  }, encode);
+  zider.AES('decrypt', password, vector, data, func, encode);
 };

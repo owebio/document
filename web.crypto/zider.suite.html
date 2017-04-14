@@ -182,9 +182,8 @@
     <button id="bt-decrypt"><i>certification</i>.decrypt()</button>
   </p>
 </div>
-<h1>Misc. 1 - Bcrypt </h1>
-<p>to check password validation without using it directly.</p>
-<div>Input text to hash </div>
+<h1>Misc. 1 - BCRYPT </h1>
+<p>test password / key derivation</p>
 <p class="field">
   <input id="bcrypt-input" class="full-line" placeholder="PASSWORD">
 </p>
@@ -389,8 +388,8 @@ $("#bt-aes-d-encrypt").click(function(){
   var source    = JSON.parse($("#aes-d-source-text").val().trim());
   var data      = base64url.decode(source.data);
   var vector    = source.vector;
-    zider.decrypt(data, vector, $("#aes-d-source-password").val().trim(), function(r){
-      $("#aes-d-source-result").html(UTF8.decode(base64url.decode(r)));
+    zider.decrypt(data, vector, $("#aes-d-source-password").val().trim(), function(r, e){
+      $("#aes-d-source-result").html((e || !r) ? "Wrong!" : UTF8.decode(base64url.decode(r)));
     }, 'base64url');
   }
   catch (err) {
