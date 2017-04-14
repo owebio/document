@@ -122,13 +122,21 @@ $.fn.html   = function(html) {
   else this.each(function(e){ e.innerHTML = html});
   return this;
 };
-$.fn.val  = function() {
+$.fn.val  = function(val) {
   var value = this.item(0).value ;
-  if (value != undefined) return value;
+  if (val !== undefined) this.item(0).value = val;
+  else return value;
+  return this;
 };
 $.fn.click = function(fn) {
   if (fn) return this.on('click', fn);
   return this.each(function(e){ e.click && e.click() });
+};
+$.fn.remove = function() {
+  this.each(function(e){
+    e.parentNode.removeChild(e);
+  });
+  return this;
 };
 
 window.$ = $;

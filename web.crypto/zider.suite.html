@@ -18,7 +18,7 @@
   html {min-width:400px; font-size:14px;}
   h1 {font-size:1.45em}
   h2 {font-size:1.35em}
-  .output {padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
+  .output {position:relative;padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
   .output.em1 {height:1.35em}
   button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
   .half  > div {width:47%;float:left;padding-right:3%;}
@@ -36,6 +36,15 @@
   ul.desc {font-size:12px;margin:1em 1.5em;padding:0;font-family:helvetica, arial;line-height:1.5}
   input {width:7em}
   input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
+  div.copied {
+    position:absolute;
+    background:RGBA(0,0,0,0.75);
+    color: #FE1010; line-height:1; font-size:14px;padding:7px 15px;
+    top:50%;left:50%;
+    transform:translate(-50%, -50%);
+    border-radius: 5px;
+  }
+  div.output.okCopy {border-right:5px solid #DF0000}
   </style>
 </head>
 <body>
@@ -43,10 +52,10 @@
 <div id="header">
   <div id="title">⚷ ZIDER DEV CORE SUITE</div>
 </div>
-<h1>Zider Neutral Key</h1>
+<h1>Zider Pseudo Key</h1>
 <div class="half">
   <div>
-    <p>Zider Neutral Key Generate
+    <p>Zider Psuedo Key Generate
       <select id="opt-key-gen-ver">
         <option value="v1">v1</option>
         <option value="v2">v2</option>
@@ -148,7 +157,7 @@
     <option disabled>data</option>
   </select>
   <textarea id="opt-sign-text" class="full"></textarea>
-  <div id="sign-output" class="output">
+  <div id="sign-output" class="output okCopy">
   </div>
   <p>
     <button id="bt-sign"><i>certification</i>.sign()</button>
@@ -165,7 +174,7 @@
 <h1>Zider Encrypt</h1>
 <div class="field">
   <textarea id="encrypt-text" class="full"></textarea>
-  <div id="encrypt-output" class="output">
+  <div id="encrypt-output" class="output okCopy">
   </div>
   <p>
     <button id="bt-encrypt"><i>certification</i>.encrypt()</button>
@@ -186,7 +195,7 @@
 <p class="field">
   <input id="bcrypt-input" class="full-line" placeholder="type password to generate hash">
 </p>
-<div id="bcrypt-hash-output" class="output em1"></div>
+<div id="bcrypt-hash-output" class="output em1 okCopy"></div>
 <button id="bt-gen-bcrypt">generate Bcrypt's hash</button>
 <p>Input text to hash </p>
 <p class="field">
@@ -205,7 +214,7 @@
 <div class="field">
   <textarea id="aes-source-text" class="full" placeholder="message to encrypt"></textarea>
 </div>
-<div id="aes-source-result" class="output"></div>
+<div id="aes-source-result" class="output okCopy"></div>
 <button id="bt-aes-encrypt">Encrypt with password</button>
 <p>AES-CBC DECRYPTION</p>
 <p class="field">
@@ -358,6 +367,37 @@ $("#bt-aes-d-encrypt").click(function(){
   catch (err) {
       $("#aes-d-source-result").html("Error : Wrong password or invalid format.");
   }
+});
+var copiedID = undefined;
+$(".output.okCopy").click(function(e){
+  var data = (this.innerText).trim();
+  if (!data) return this;
+  if (copiedID) {
+    $('.copied').remove();
+    clearTimeout(copiedID);
+    copiedID = undefined;
+  }
+  var copied = document.createElement("div");
+  copied.className = 'copied';
+  copied.innerHTML = "copied!";
+  var ghost = document.createElement("input");
+  ghost.style.position = 'fixed';
+  ghost.style.zIndex   = '-1';
+  document.body.append(ghost);
+  ghost.value = this.innerText;
+  ghost.select();
+  document.execCommand("copy");
+  ghost.blur();
+  this.append(copied);
+  copied.className += ' si';
+  copiedID = setTimeout(function(){
+    if (copiedID) {
+      $('.copied').remove();
+      clearTimeout(copiedID);
+      copiedID = undefined;
+    }
+  }, 1200);
+  ghost.parentNode.removeChild(ghost);
 });
 </script>
 </body>
