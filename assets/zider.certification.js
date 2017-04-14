@@ -38,7 +38,7 @@ zider.certification.create = function(password, name, func, version) {
     cert.data = key;
     cert.nid  = key.n;
     // 1. sign 
-    zider.sign(cert.data, base64url.decode(cert.nid), function(signed){
+    zider.RSA.sign(cert.data, base64url.decode(cert.nid), function(signed){
       cert.signature = base64url.encode(signed);
       // 2. hash
       zider.hash(signed, function(hid){
@@ -93,7 +93,7 @@ zider.certification.sign    = function(cert, method, type, msg, func, receiver) 
   };
   var source = UTF8.encode(JSON.stringify(itemForSigning));
   zider.hash(source, function(hash){
-    zider.sign(cert, hash, function(_signature){
+    zider.RSA.sign(cert, hash, function(_signature){
       var signature = {
         source    : base64url.encode(source),
         signature : _signature
@@ -109,7 +109,7 @@ zider.certification.verify  = function(signature, source, func) {
   var pseudoCert = {n : parsed.signer, v: parsed.version};
   var signature  = base64url.decode(signature);
   zider.hash(source, function(hash){
-    zider.verify(pseudoCert, signature, hash, function(validation){
+    zider.RSA.verify(pseudoCert, signature, hash, function(validation){
       func(validation, parsed);
     });
   });
@@ -134,7 +134,7 @@ zider.certification.encrypt = function(cert, data, func) {
     vector : undefined,
     key    : undefined
   }
-  zider.RSAEncrypt(cert, password, function(value){
+  zider.RSA.encrypt(cert, password, function(value){
     result.key = value;
     if (result.vector) cbFunc(result);
   }, 'base64url');
@@ -149,7 +149,7 @@ zider.certification.decrypt = function(cert, source, func) {
   var vector = zider.convert.base64url.decode(source.vector);
   var data   = zider.convert.base64url.decode(source.data);
   var key    = zider.convert.base64url.decode(source.key);
-  zider.RSADecrypt(cert, key, function(_KEY){
+  zider.RSA.decrypt(cert, key, function(_KEY){
     zider.decrypt(data, vector, _KEY, function(original){
       func(JSON.parse(zider.convert.UTF8.decode(original)));
     })
