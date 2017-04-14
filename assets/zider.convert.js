@@ -16,7 +16,7 @@ zider.convert.ab2hex = function(buf, sep) {
   var r = '';
   var UintView = new Uint8Array(buf);
   for (var i = 0; i < UintView.length; i++) {
-    r += ((i!=0 && sep) ? sep : '') + (UintView[i]).toString(16);
+    r += ((i!=0 && sep) ? sep : '') + ("0" + (UintView[i]).toString(16)).slice(-2);
   };
   return r;
 };

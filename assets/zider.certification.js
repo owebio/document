@@ -6,16 +6,17 @@
 zider = window.zider || {};
 zider.certification = {};
 
-var convert = zider.convert;
-var UTF8 = convert.UTF8;
+var convert   = zider.convert;
+var UTF8      = convert.UTF8;
 var base64url = convert.base64url;
 
 zider.certification.create = function(password, name, func, version) {
   var password = password || "zider.io";
   var _______  = undefined;
   var convert  = zider.convert;
+  var version  = version || 'v1';
   var cert = { 
-    version : version || 'v1-sole',
+    version : version,
     name    : name    || '',
     time    : 1*(new Date()),
     hid     : _______,  // zider.hash(zider.sign(n), hex);
@@ -24,7 +25,7 @@ zider.certification.create = function(password, name, func, version) {
     data    : {
       d  : _______, dp : _______, dq : _______,
       p  : _______, q  : _______, qi : _______,
-      n  : _______ 
+      n  : _______, v  : version
     },
     _encrypt : {
       data   : _______,
@@ -52,7 +53,7 @@ zider.certification.create = function(password, name, func, version) {
         }, 'base64url');
       }, '', 'hex');
     });
-  });
+  }, version);
 };
 zider.certification.shareLink = function(cert, html, className) {
   var url = 'https://www.zider.io/?method=sharelink';
@@ -74,7 +75,7 @@ zider.certification.shareLink = function(cert, html, className) {
 zider.certification.sign    = function(cert, method, type, msg, func, receiver) {
   var randomSeed = zider.seed(16);
   var itemForSigning = {
-    version  : 'v1-sole',
+    version  : cert.v || 'v1',
     method   : method || 'message', // login | message
     type     : type   || 'text',    // text  | json | data 
     message  : msg,                 
@@ -104,11 +105,12 @@ zider.certification.sign    = function(cert, method, type, msg, func, receiver) 
 };
 zider.certification.verify  = function(signature, source, func) {
   var source     = base64url.decode(source);
-  var pseudoCert = {n : (JSON.parse(UTF8.decode(source))).signer};
-  var signature = base64url.decode(signature);
+  var parsed     = JSON.parse(UTF8.decode(source));
+  var pseudoCert = {n : parsed.signer, v: parsed.version};
+  var signature  = base64url.decode(signature);
   zider.hash(source, function(hash){
     zider.verify(pseudoCert, signature, hash, function(validation){
-      func(validation);
+      func(validation, parsed);
     });
   });
 };
@@ -132,7 +134,7 @@ zider.certification.encrypt = function(cert, data, func) {
     vector : undefined,
     key    : undefined
   }
-  zider.asyEncrypt(cert, password, function(value){
+  zider.RSAEncrypt(cert, password, function(value){
     result.key = value;
     if (result.vector) cbFunc(result);
   }, 'base64url');
@@ -147,7 +149,7 @@ zider.certification.decrypt = function(cert, source, func) {
   var vector = zider.convert.base64url.decode(source.vector);
   var data   = zider.convert.base64url.decode(source.data);
   var key    = zider.convert.base64url.decode(source.key);
-  zider.asyDecrypt(cert, key, function(_KEY){
+  zider.RSADecrypt(cert, key, function(_KEY){
     zider.decrypt(data, vector, _KEY, function(original){
       func(JSON.parse(zider.convert.UTF8.decode(original)));
     })

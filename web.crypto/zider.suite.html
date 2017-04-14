@@ -12,24 +12,30 @@
   <script src="../assets/zider.convert.js"></script>
   <script src="../assets/zider.certification.js"></script>
   <script src="../assets/zider.ui.js"></script>
+  <script src="../assets/bcrypt.min.js"></script>
   <script src="../assets/pouchdb-6.1.2.min.js"></script>
   <style>
+  html {min-width:400px; font-size:14px;}
   h1 {font-size:1.45em}
   h2 {font-size:1.35em}
   .output {padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
+  .output.em1 {height:1.35em}
   button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
   .half  > div {width:47%;float:left;padding-right:3%;}
   .half  > div.clr, .clr {clear:both;float:none}
+  .half select {float:right}
   i {color:#7D7D7D}
-  input {background:#f3f3f3;}
+  input {background:#FAFFC1; border:1px solid #F4F6A7}
   .field {line-height:1.5}
   .field input {padding:5px}
   .output > p {margin:1em;}
   textarea.full {height:5em;width:100%;margin:1em auto;display:block;box-sizing:border-box;overflow:auto}
   table {width:100%;border-collapse:collapse}
-  table th, table td {min-width:30px;padding:5px;font:12px/18px sans-serif;text-align:center;border:1px solid #e0e0e0}
+  table th, table td {min-width:30px;padding:5px 0;font:12px/18px sans-serif;text-align:center;border:1px solid #e0e0e0}
   table th {font-weight:bold;background:#f3f3f3;}
   ul.desc {font-size:12px;margin:1em 1.5em;padding:0;font-family:helvetica, arial;line-height:1.5}
+  input {width:7em}
+  input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
   </style>
 </head>
 <body>
@@ -40,13 +46,18 @@
 <h1>Zider Neutral Key</h1>
 <div class="half">
   <div>
-    <p>Zider Neutral Key Generate</p>
+    <p>Zider Neutral Key Generate
+      <select id="opt-key-gen-ver">
+        <option value="v1">v1</option>
+        <option value="v2">v2</option>
+      </select>
+    </p>
     <div id="neutral-key-result" class="output"> </div>
-    <button id="bt-keyGenerate">zider.key.generate(func)</button>
+    <button id="bt-keyGenerate">zider.key.generate()</button>
   </div>
   <div>
     <p>
-      Zider Key Loader -
+      Zider Key Loader
       <select id="opt-key-loader">
         <option value="sign">sign</option>
         <option value="verify">verify</option>
@@ -55,15 +66,21 @@
       </select>
     </p>
     <div id="key-loader-result" class="output">
-      <p id="output-kl-algo"></p>
-      <p>
+      <div id="output-kl-algo"></div>
+      <div>
         usage : <span id="output-kl-usage"></span>,
         type  : <span id="output-kl-type"></span>
-      </p>
+      </div>
     </div>
-    <button id="bt-key-loader">zider.key.load(ntrKey, method, fn)</button>
+    <button id="bt-key-loader">zider.key.load()</button>
   </div>
   <div class="clr"></div>
+  <p>
+    <ul class="desc">
+      <li> v1 : current standard, mobile webkit does not support SHA-256 for en/decryption</li>
+      <li> v2 : using RSA-OAEP-256, for next version pending till mobile webkit browser's support.</li>
+    </ul>
+  </p>
 </div>
 <h1>Zider Certification</h1>
 <div class="field">
@@ -97,6 +114,10 @@
     - above option is not ready, later it can be added.
   </fieldset> -->
   <p class="field">
+    <select id="opt-cert-ver">
+      <option value="v1">v1</option>
+      <option value="v2">v2</option>
+    </select>
     name     : <input id="opt-cert-name" placeholder="input name (4~10)">
     password : <input type="password" id="opt-cert-pass" placeholder="input password">
   </p>
@@ -112,7 +133,7 @@
   </div>
   <p>
     <button id="bt-certification-create">zider.certification.create()</button>
-    , <span id="cert-duration"></span>ms
+     <span id="cert-duration"></span>ms
   </p>
 </div>
 <h1>Zider Sign</h1>
@@ -131,12 +152,12 @@
   </div>
   <p>
     <button id="bt-sign"><i>certification</i>.sign()</button>
-    , length - <span id="signed-message-length"></span>
+     length - <span id="signed-message-length"></span>
   </p>
 </div>
 <h1>Zider Verify</h1>
   <textarea id="verify-source" class="full" placeholder="copy and paste data from sign field"></textarea>
-  <div id="output-verify" class="output">
+  <div id="output-verify" class="output em1">
   </div>
   <p>
     <button id="bt-verify">zider.certification.verify()</button>
@@ -159,6 +180,42 @@
     <button id="bt-decrypt"><i>certification</i>.decrypt()</button>
   </p>
 </div>
+<h1>Misc. 1 - Bcrypt </h1>
+<p>to check password validation without using it directly.</p>
+<div>Input text to hash </div>
+<p class="field">
+  <input id="bcrypt-input" class="full-line" placeholder="type password to generate hash">
+</p>
+<div id="bcrypt-hash-output" class="output em1"></div>
+<button id="bt-gen-bcrypt">generate Bcrypt's hash</button>
+<p>Input text to hash </p>
+<p class="field">
+  <input id="bcrypt-validation-text" class="full-line"  placeholder="type password to check hash">
+</p>
+<p class="field">
+  <input id="bcrypt-validation-result" class="full-line" placeholder="paste hash here to check validation">
+</p>
+<div id="bcrypt-hash-compare" class="output em1"></div>
+<button id="bt-check-bcrypt">check password</button>
+<h1>Misc. 2 - AES-CBC </h1>
+<p>AES-CBC ENCRYPTION</p>
+<p class="field">
+  <input id="aes-source-password" class="full-line"  placeholder="type password for encryption">
+</p>
+<div class="field">
+  <textarea id="aes-source-text" class="full" placeholder="message to encrypt"></textarea>
+</div>
+<div id="aes-source-result" class="output"></div>
+<button id="bt-aes-encrypt">Encrypt with password</button>
+<p>AES-CBC DECRYPTION</p>
+<p class="field">
+  <input id="aes-d-source-password" class="full-line"  placeholder="type password for decrytion">
+</p>
+<div class="field">
+  <textarea id="aes-d-source-text" class="full" placeholder="source to decrypt"></textarea>
+</div>
+<div id="aes-d-source-result" class="output"></div>
+<button id="bt-aes-d-encrypt">Decrypt with password</button>
 
 <h1>Zider Compatibility</h1>
 <div>
@@ -178,10 +235,23 @@
   <td>O</td><td>O</td><td>O</td><td>?</td><td>O</td><td>O</td>
   <td>?</td>
 </tr>
+<tr>
+  <th>V1</th>
+  <td>X</td><td>O</td><td>O</td>
+  <td>O</td><td>O</td><td>O</td><td>?</td><td>O</td><td>O</td>
+  <td>?</td>
+</tr>
+<tr>
+  <th>V2</th>
+  <td>X</td><td>O</td><td>O</td>
+  <td>O</td><td>O</td><td>O</td><td>?</td><td>½</td><td>½</td>
+  <td>?</td>
+</tr>
 </table>
 <ul class="desc">
   <li> About two mobile browsers, tested on only iphone (iOS). </li>
   <li> About desktop browsers, tested on only MS Windows (Win11). </li>
+  <li> Till now Mobile webkit browsers do not support SHA-256 on RSA-OAEP. </li>
 </div>
 
 <div id="footer">
@@ -199,7 +269,7 @@ $("#bt-keyGenerate").click(function(){
   zider.key.generate(function(result){
     neutralKey = result;
     $("#neutral-key-result").html(JSON.stringify(result));
-  });
+  }, $("#opt-key-gen-ver").val());
 });
 $("#bt-key-loader").click(function(){
   var method = $("#opt-key-loader").val();
@@ -210,7 +280,7 @@ $("#bt-key-loader").click(function(){
     $("#output-kl-type").html(realKey.type);
   });
 });
-$("#bt-certification-create").click(function(){
+$("#bt-certification-create").on('mousedown', function(){
   var start = new Date();
   $("#cert-duration").html('...');
   zider.certification.create($('#opt-cert-pass').val(), $("#opt-cert-name").val(), function(_cert){
@@ -222,7 +292,7 @@ $("#bt-certification-create").click(function(){
     $("#cert-nid").html(cert.nid);
     $("#cert-signature").html(cert.signature);
     $("#cert-duration").html( (new Date()) - start);
-  });
+  }, $("#opt-cert-ver").val());
 });
 var signature = undefined;
 $("#bt-sign").click(function(){
@@ -235,11 +305,12 @@ $("#bt-sign").click(function(){
   });
 });
 $("#bt-verify").click(function(){
-    $("#output-verify").html('');
-    var source = ($("#verify-source").val()).trim();
-    if (!source) return alert('copy above code and paste here...');
-    source = JSON.parse(source);
-    zider.certification.verify(source.signature, source.source, function(validation){
+  $("#output-verify").html('');
+  var source = ($("#verify-source").val()).trim();
+  if (!source) return alert('copy above code and paste here...');
+  try {source = JSON.parse(source);}
+  catch (err) {return $("#output-verify").html("Invalid text");}
+  zider.certification.verify(source.signature, source.source, function(validation){
     $("#output-verify").html(validation);
   });
 });
@@ -252,6 +323,41 @@ $("#bt-encrypt").click(function(){
 $("#bt-decrypt").click(function(){
   var value = $("#decrypt-text").val().trim();
   cert.decrypt(value, function(e){$("#decrypt-output").html(JSON.stringify(e))});
+});
+var bcrypt = dcodeIO.bcrypt;
+$("#bt-gen-bcrypt").click(function(){
+  $("#bcrypt-hash-output").html("processing...");
+  bcrypt.hash($("#bcrypt-input").val(), 10, function(err, hash) {
+    // IE11 is pretty slower than others
+    $("#bcrypt-hash-output").html(hash);
+  });
+});
+$("#bt-check-bcrypt").click(function(){
+  $("#bcrypt-hash-compare").html("processing...");
+  bcrypt.compare($("#bcrypt-validation-text").val(), $("#bcrypt-validation-result").val(), function(err, res) {
+    $("#bcrypt-hash-compare").html(res);
+  });
+});
+$("#bt-aes-encrypt").click(function(){
+  zider.encrypt($("#aes-source-text").val(), $("#aes-source-password").val(), function(r){
+    $("#aes-source-result").html(JSON.stringify(r));
+  }, 'base64url');
+});
+$("#bt-aes-d-encrypt").click(function(){
+  $("#aes-d-source-result").html("Process...");
+  try {
+  var base64url = zider.convert.base64url;
+  var UTF8      = zider.convert.UTF8;
+  var source    = JSON.parse($("#aes-d-source-text").val().trim());
+  var data      = base64url.decode(source.data);
+  var vector    = source.vector;
+    zider.decrypt(data, vector, $("#aes-d-source-password").val().trim(), function(r){
+      $("#aes-d-source-result").html(UTF8.decode(base64url.decode(r)));
+    }, 'base64url');
+  }
+  catch (err) {
+      $("#aes-d-source-result").html("Error : Wrong password or invalid format.");
+  }
 });
 </script>
 </body>
