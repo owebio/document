@@ -43,21 +43,22 @@
 <script>
 var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   if (e !== false) {
+    if (!b) return o;
     if (typeof o == 'string') {
       var p = {}, s = j.split(',');
        o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
       var o = {}, b = p, j = undefined;
     }
     switch (typeof j) {
-      case 'string' : var i = j.split(','); break;
-      case 'object' : var i = j; break;
-      default       : var i = Object.getOwnPropertyNames(b);
+      case 'string'    : var i = j.split(','); break;
+      case 'object'    : var i = j; break;
+      default          : var i = Object.getOwnPropertyNames(b);
     }
     switch (typeof b) {
-      case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-      default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+      case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+      default          : i.forEach(function(z,s,a) {o[z] = b[z]});
     }
-  } else $(o, c, t);
+  } else $$({}, [o, c, t]);
   return o;
 };
 </script>
@@ -68,22 +69,24 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
 <h1>CODE</h1>
 <pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   if (e !== false) {
+    if (!b) return o;
     if (typeof o == 'string') {
       var p = {}, s = j.split(',');
        o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
       var o = {}, b = p, j = undefined;
     }
     switch (typeof j) {
-      case 'string' : var i = j.split(','); break;
-      case 'object' : var i = j; break;
-      default       : var i = Object.getOwnPropertyNames(b);
+      case 'string'    : var i = j.split(','); break;
+      case 'object'    : var i = j; break;
+      default          : var i = Object.getOwnPropertyNames(b);
     }
     switch (typeof b) {
-      case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-      default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+      case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+      default          : i.forEach(function(z,s,a) {o[z] = b[z]});
     }
-  } else $(o, c, t);
+  } else $$({}, [o, c, t]);
   return o;
+};
 </code></pre>
 <p>Freely creating, copying, modifying and keeping part of object in any context.<br>
 <div id="desc">Stopping your bleeding time, sharpening your tool.</div>
