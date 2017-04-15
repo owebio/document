@@ -40,21 +40,23 @@
 </head>
 <body>
 <script>
-var $$ = /*window.$$ ||*/ function (o, b, j) {
-  if (typeof o == 'string') {
-    var p = {}, s = j.split(',');
-     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
-    var o = {}, b = p, j = undefined;
-  }
-  switch (typeof j) {
-    case 'string' : var i = j.split(','); break;
-    case 'object' : var i = j; break;
-    default       : var i = Object.getOwnPropertyNames(b);
-  }
-  switch (typeof b) {
-    case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-    default         : i.forEach(function(z,s,a) {o[z] = b[z]});
-  }
+var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
+  if (e !== false) {
+    if (typeof o == 'string') {
+      var p = {}, s = j.split(',');
+       o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+      var o = {}, b = p, j = undefined;
+    }
+    switch (typeof j) {
+      case 'string' : var i = j.split(','); break;
+      case 'object' : var i = j; break;
+      default       : var i = Object.getOwnPropertyNames(b);
+    }
+    switch (typeof b) {
+      case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+      default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+    }
+  } else $(o, c, t);
   return o;
 };
 </script>
@@ -63,23 +65,24 @@ var $$ = /*window.$$ ||*/ function (o, b, j) {
   <div id="title"><i class="fa fa-code" aria-hidden="true"></i> $$ - less code, less pain </div>
 </div>
 <h1>CODE</h1>
-<pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j) {
-  if (typeof o == 'string') {
-    var p = {}, s = j.split(',');
-     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
-    var o = {}, b = p, j = undefined;
-  }
-  switch (typeof j) {
-    case 'string' : var i = j.split(','); break;
-    case 'object' : var i = j; break;
-    default       : var i = Object.getOwnPropertyNames(b);
-  }
-  switch (typeof b) {
-    case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-    default         : i.forEach(function(z,s,a) {o[z] = b[z]});
-  }
+<pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
+  if (e !== false) {
+    if (typeof o == 'string') {
+      var p = {}, s = j.split(',');
+       o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+      var o = {}, b = p, j = undefined;
+    }
+    switch (typeof j) {
+      case 'string' : var i = j.split(','); break;
+      case 'object' : var i = j; break;
+      default       : var i = Object.getOwnPropertyNames(b);
+    }
+    switch (typeof b) {
+      case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+      default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+    }
+  } else $(o, c, t);
   return o;
-};
 </code></pre>
 <p>
   Freely creating, copying, modifying and keeping part of object in any context.
@@ -125,8 +128,8 @@ greeting.say(greeting.es.hi);
   // ★ IE11 : ERROR IF ADDING MORE PROPERTY
   // ★ IE11 : kty, extractable, n, e | d dp dq e extractable kty n p q qi
   // ★ MOBILE WEBKIT & IE11 KEYTYPE - [ARRAYBUFFER! of Stringified JSON]
-  var k = $$({}, {kty: "RSA", e: d.e, n: s.n});
-  ((document.documentMode == 11) && $$(k, {extractable: true})) || $$(k, d, 'key_ops,alg');
+  var k = {kty: "RSA", e: d.e, n: s.n};
+  $$(k, {extractable: true}, undefined, (document.documentMode == 11) || false, d, 'key_ops,alg');
   if (m == 'sign' || m == 'decrypt') $$(k, s, 'd,dp,dq,p,q,qi');
   return (window.CryptoKey)? $$(k, {ext: true}) : zider.encode('str2ab', JSON.stringify(k)).buffer;
 };</code></pre>
