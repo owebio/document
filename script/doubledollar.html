@@ -82,7 +82,7 @@ var $$ = /*window.$$ ||*/ function (o, b, j) {
 };
 </code></pre>
 <p>
-  Freely creating, copying, modifying and keeping in any context.
+  Freely creating, copying, modifying and keeping part of object in any context.
 </p>
 <h1>¶ 1</h1>
 <pre><code class="javascript">greeting.es.hi = "hola";
@@ -96,7 +96,7 @@ greeting.say(greeting.es.hi);
 <h1>¶ 2</h1>
 <pre><code class="javascript">var newOne = $$({}, otherObject) // Shallow copy</code></pre>
 <h1>¶ 3</h1>
-<pre><code class="javascript">var some = $$(giveMe, source, 'part1,part2') // get parts</code></pre>
+<pre><code class="javascript">Do($$(giveMe, source, 'part1,part2')); // get parts and continue coding</code></pre>
 <h1>¶ 4</h1>
 <pre><code class="javascript">Do($$({}, $$('hola,bien', ['hi','bye','good'], '0,2')));</code></pre>
 <h1>¶ 5</h1>
