@@ -91,7 +91,7 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
 <p>Freely creating, copying, modifying and keeping part of object in any context.<br>
 <div class="desc">Stopping your bleeding time, sharpening your tool.</div>
 </p>
-<h1>¶ 1</h1>
+<h1>¶ 1. Using and setting together. </h1>
 <pre><code class="javascript">greeting.es.hi = "hola";
 greeting.es.bye = "chao";
 ...
@@ -100,15 +100,16 @@ greeting.say(greeting.es.hi);
 <p><i class="fa fa-chevron-down" aria-hidden="true"></i></p>
 <pre><code class="javascript">greeting.say($$(greeting.es, {hi: 'hola', bye: 'chao'}).hi);
 </code></pre>
-<h1>¶ 2</h1>
+<h1>¶ 2. Shallow copying. </h1>
 <pre><code class="javascript">var newOne = $$({}, otherObject) // Shallow copy</code></pre>
-<h1>¶ 3</h1>
+<h1>¶ 3. Taking part. </h1>
 <pre><code class="javascript">Do($$(giveMe, source, 'part1,part2')); // get parts and continue coding</code></pre>
-<h1>¶ 4</h1>
-<pre><code class="javascript">Do($$({}, $$('hola,bien', ['hi','bye','good'], '0,2')));</code></pre>
-<h1>¶ 5</h1>
+<h1>¶ 4. Setting property and value of object from array</h1>
+<pre><code class="javascript">$$({}, $$('hola,bien', ['hi','bye','good'], '0,2'));
+// => {hola : 'hi', bien : 'good'}</code></pre>
+<h1>¶ 5. Setting value with changing prorpety name</h1>
 <pre><code class="javascript">Do($$({}, $$('hi, bye', {meet: 'hola', leave: 'chao', none : 'nada'}, 'meet, leave')));</code></pre>
-<h1>¶ 6</h1>
+<h1>¶ 6. Conditional excution.</h1>
 <pre><code class="javascript">$$(Carlos, {meet: 'hola', leave: 'chao'}, 'meet', conditional || false, {do: 'hey'}, 'do')));</code></pre>
 <div class="desc"> Conditional expression should be finished with 'false'</div>
 <h1>Real Example</h1>
