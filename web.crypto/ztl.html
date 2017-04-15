@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title> ZTL.js - Normalizing crypto.subtle </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9;"/>
+  <link href="../assets/zider.css" rel="stylesheet">
+  <script src="../assets/zider.dom.js"></script>
+  <script src="../assets/zider.convert.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/zenburn.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+  <script src="https://use.fontawesome.com/d1e0079ea8.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <style>
+  html {min-width:400px; font-size:14px;}
+  h1 {font-size:1.45em;margin:1.25em 0}
+  h2 {font-size:1.35em}
+  .output {position:relative;padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
+  .output.em1 {height:1.35em}
+  button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
+  .half  > div {width:47%;float:left;padding-right:3%;}
+  .half  > div.clr, .clr {clear:both;float:none !important}
+  .half select {float:right}
+  i {color:#7D7D7D}
+  input {background:#FAFFC1; border:1px solid #F4F6A7}
+  .field {line-height:1.5}
+  .field input {padding:5px}
+  .output > p {margin:1em;}
+  textarea.full {height:5em;width:100%;margin:1em auto;display:block;box-sizing:border-box;overflow:auto}
+  table {width:100%;border-collapse:collapse}
+  table th, table td {min-width:30px;padding:5px 0;font:12px/18px sans-serif;text-align:center;border:1px solid #e0e0e0}
+  table th {font-weight:bold;background:#f3f3f3;}
+  ul.desc {font-size:12px;margin:1em 1.5em;padding:0;font-family:helvetica, arial;line-height:1.5}
+  input {width:7em}
+  input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
+  pre {border:8px solid #CFCFCF; font-size:12px; background:#3F3F3F;}
+  pre code.hljs  {font-family:consolas, courier, monospace;;padding: 8px 4px}
+  .desc {font-size:12px;color: #9E9E9E}
+  iframe {box-sizing:border-box;border:8px solid #E7E7E7}
+  </style>
+</head>
+<body>
+<script>
+var ZTL = function(m, a, c, u) {
+  var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
+  var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
+  try { // FIXING IE 11 BUG : onerror, never expect it!
+    var f = function(v, n) {
+      if (n) console.log('ZTL error : [' + m + ']', n, a);
+      var _ = (v && v.target && v.target.result/*IE11*/) || v;
+      return c.call(x, _, n);
+    };
+    var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
+    if (x.then) return x.then(f).catch(function(n) {f(u, n)});
+    return x.oncomplete = f;
+  } catch (n) {f(u, n)};
+};
+</script>
+<div id="zider">
+<div id="header">
+  <div id="title">ZTL.js - Normalizing crypto.subtle  </div>
+</div>
+<h1><i class="fa fa-code" aria-hidden="true"></i> Code</h1>
+<pre><code class="javascript">// ### Normailizing Web cryptography subtle
+// [Normalization] New spec [Promise] vs old spec [Event Object, IE11]
+// [Minimization ] then(oncomplete) and catch(onerror) as one functon.
+// [IE11 BUG     ] IE11 never fires 'onerror', use try-catch statement.
+// [Callback Func] cbFunc(value, ifError);
+var ZTL = function(m, a, c, u) {
+  var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
+  var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
+  try { // FIXING IE 11 BUG : onerror, never expect it!
+    var f = function(v, n) {
+      if (n) console.log('ZTL error : [' + m + ']', n, a);
+      var _ = (v && v.target && v.target.result/*IE11*/) || v;
+      return c.call(x, _, n);
+    };
+    var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
+    if (x.then) return x.then(f).catch(function(n) {f(u, n)});
+    return x.oncomplete = f;
+  } catch (n) {f(u, n)};
+};
+</code></pre>
+<p>TO USING SUBTLE TOGETHER WITH MORE BROWSERS.<br>
+<div class="desc">Stopping your bleeding time, sharpening your tool. <br> IE11, MS Edge, Webkit Mobile(Chrome, Safari)and Other PC morderns (Chrome, Firefox, Opera).</div>
+</p>
+<h1><i class="fa fa-snowflake-o" aria-hidden="true"></i> Arguments </h1>
+<table>
+<tr>
+  <th> name </th><th>type</th><th> desc.</th>
+</tr>
+<tr>
+  <th> m </th><td>string</td><td>generateKey | importKey | exportKey | sign | verify | digest ...</td>
+</tr>
+<tr>
+  <th> a </th><td>array</td><td>argument collection</td>
+</tr>
+<tr>
+  <th> c </th><td>function</td><td>call back function (result, error)</td>
+</tr>
+<tr>
+  <th> u </th><td>undefined</td><td>Don't set any to this.</td>
+</tr>
+</table>
+<h1><i class="fa fa-coffee" aria-hidden="true"></i> Something different? </h1>
+<pre><code class="javascript">window.crypto.subtle.generateKey(
+    {
+        name: "RSASSA-PKCS1-v1_5",
+        modulusLength: 2048, //can be 1024, 2048, or 4096
+        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        hash: {name: "SHA-256"}, //can be "SHA-1", "SHA-256", "SHA-384", or "SHA-512"
+    },
+    false, //whether the key is extractable (i.e. can be used in exportKey)
+    ["sign", "verify"] //can be any combination of "sign" and "verify"
+)
+.then(function(key){
+    //returns a keypair object
+    console.log(key);
+    console.log(key.publicKey);
+    console.log(key.privateKey);
+})
+.catch(function(err){
+    console.error(err);
+});
+</code></pre>
+<div class="desc">Code is from <a href="https://github.com/diafygi/webcrypto-examples">diafygi/webcrypto-examples</a></div>
+<p><i class="fa fa-chevron-down" aria-hidden="true"></i></p>
+<pre><code class="javascript">ZTL('generateKey', [
+    {
+        name: "RSASSA-PKCS1-v1_5",
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        hash: {name: "SHA-256"},
+    },
+    false,
+    ["sign", "verify"]
+  ], function(key, error) {
+    if (error) {/*doSomething!*/}
+    else {/*doSomething!*/}
+});
+</code></pre>
+
+<h1><i class="fa fa-bolt" aria-hidden="true"></i> Example </h1>
+<iframe width="100%" height="300" src="//jsfiddle.net/L5m92ac3/4/embedded/js,result/?bodyColor=fff" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+<div id="footer">
+  oweb.io / oneiroi
+</div>
+
+</div>
+
+<script>
+</script>
+</body>
+</html>
