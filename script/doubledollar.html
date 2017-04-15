@@ -64,9 +64,9 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
 </script>
 <div id="zider">
 <div id="header">
-  <div id="title"><i class="fa fa-code" aria-hidden="true"></i> $$ - less code, less pain </div>
+  <div id="title">$$ - less code, less pain </div>
 </div>
-<h1>CODE</h1>
+<h1><i class="fa fa-code" aria-hidden="true"></i> </h1>
 <pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   if (e !== false) {
     if (!b) return o;
@@ -91,7 +91,7 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
 <p>Freely creating, copying, modifying and keeping part of object in any context.<br>
 <div class="desc">Stopping your bleeding time, sharpening your tool.</div>
 </p>
-<h1>¶ 1. Using and setting together. </h1>
+<h1>¶ 1. Using, setting in one go (returning self). </h1>
 <pre><code class="javascript">greeting.es.hi = "hola";
 greeting.es.bye = "chao";
 ...
@@ -102,12 +102,12 @@ greeting.say(greeting.es.hi);
 </code></pre>
 <h1>¶ 2. Shallow copying. </h1>
 <pre><code class="javascript">var newOne = $$({}, otherObject) // Shallow copy</code></pre>
-<h1>¶ 3. Taking part. </h1>
+<h1>¶ 3. Taking some parts of other's. </h1>
 <pre><code class="javascript">Do($$(giveMe, source, 'part1,part2')); // get parts and continue coding</code></pre>
-<h1>¶ 4. Setting property and value of object from array</h1>
+<h1>¶ 4. Building property and value from array.</h1>
 <pre><code class="javascript">$$({}, $$('hola,bien', ['hi','bye','good'], '0,2'));
 // => {hola : 'hi', bien : 'good'}</code></pre>
-<h1>¶ 5. Setting value with changing prorpety name</h1>
+<h1>¶ 5. Setting value with changed prorpety name</h1>
 <pre><code class="javascript">Do($$({}, $$('hi, bye', {meet: 'hola', leave: 'chao', none : 'nada'}, 'meet, leave')));</code></pre>
 <h1>¶ 6. Conditional excution.</h1>
 <pre><code class="javascript">$$(Carlos, {meet: 'hola', leave: 'chao'}, 'meet', conditional || false, {do: 'hey'}, 'do')));</code></pre>
