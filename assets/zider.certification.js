@@ -40,9 +40,10 @@ zider.certification.create = function(password, name, func, version) {
     // 1. sign 
     zider.RSA.sign(cert.data, base64url.decode(cert.nid), function(signed){
       cert.signature = base64url.encode(signed);
-      // 2. hash
+      // 2. hashdata, func, algo, encode
       zider.hash(signed, function(hid){
-        cert.hid = hid;
+        cert.hid = hid.substring(0,24);
+        console.log(hid, cert.hid, cert.hid.length);
         // 3. encrypt
         var _data = convert.str2ab(JSON.stringify(cert.data), true);
         zider.encrypt(_data, password, function(encrypted){
@@ -51,7 +52,7 @@ zider.certification.create = function(password, name, func, version) {
           var ziderCertification = new _ziderCertification(cert);
           if (func) func(ziderCertification);
         }, 'base64url');
-      }, '', 'hex');
+      }, '', 'ab2hex');
     });
   }, version);
 };
@@ -150,7 +151,7 @@ zider.certification.decrypt = function(cert, source, func) {
   var data   = zider.convert.base64url.decode(source.data);
   var key    = zider.convert.base64url.decode(source.key);
   zider.RSA.decrypt(cert, key, function(_KEY){
-    zider.decrypt(data, vector, _KEY, function(original){
+    zider.decrypt(data, _KEY, vector, function(original){
       func(JSON.parse(zider.convert.UTF8.decode(original)));
     })
   });

@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title> $$ </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=11; IE=10; IE=9;"/>
+  <link href="../assets/zider.css" rel="stylesheet">
+  <script src="../assets/zider.dom.js"></script>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/zenburn.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+  <script src="https://use.fontawesome.com/d1e0079ea8.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <style>
+  html {min-width:400px; font-size:14px;}
+  h1 {font-size:1.45em;margin:1.25em 0}
+  h2 {font-size:1.35em}
+  .output {position:relative;padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
+  .output.em1 {height:1.35em}
+  button {padding:5px 8px;border:1px solid #606060;font-size:14px;}
+  .half  > div {width:47%;float:left;padding-right:3%;}
+  .half  > div.clr, .clr {clear:both;float:none !important}
+  .half select {float:right}
+  i {color:#7D7D7D}
+  input {background:#FAFFC1; border:1px solid #F4F6A7}
+  .field {line-height:1.5}
+  .field input {padding:5px}
+  .output > p {margin:1em;}
+  textarea.full {height:5em;width:100%;margin:1em auto;display:block;box-sizing:border-box;overflow:auto}
+  table {width:100%;border-collapse:collapse}
+  table th, table td {min-width:30px;padding:5px 0;font:12px/18px sans-serif;text-align:center;border:1px solid #e0e0e0}
+  table th {font-weight:bold;background:#f3f3f3;}
+  ul.desc {font-size:12px;margin:1em 1.5em;padding:0;font-family:helvetica, arial;line-height:1.5}
+  input {width:7em}
+  input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
+  pre {border:8px solid #CFCFCF; font-size:12px; background:#3F3F3F;}
+  pre code.hljs  {font-family:consolas, courier, monospace;;padding: 8px 4px}
+  </style>
+</head>
+<body>
+<script>
+var $$ = /*window.$$ ||*/ function (o, b, j) {
+  if (typeof o == 'string') {
+    var p = {}, s = j.split(',');
+     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+    var o = {}, b = p, j = undefined;
+  }
+  switch (typeof j) {
+    case 'string' : var i = j.split(','); break;
+    case 'object' : var i = j; break;
+    default       : var i = Object.getOwnPropertyNames(b);
+  }
+  switch (typeof b) {
+    case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+    default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+  }
+  return o;
+};
+</script>
+<div id="zider">
+<div id="header">
+  <div id="title"><i class="fa fa-code" aria-hidden="true"></i> $$ - less code, less pain </div>
+</div>
+<h1>CODE</h1>
+<pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j) {
+  if (typeof o == 'string') {
+    var p = {}, s = j.split(',');
+     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+    var o = {}, b = p, j = undefined;
+  }
+  switch (typeof j) {
+    case 'string' : var i = j.split(','); break;
+    case 'object' : var i = j; break;
+    default       : var i = Object.getOwnPropertyNames(b);
+  }
+  switch (typeof b) {
+    case 'function' : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+    default         : i.forEach(function(z,s,a) {o[z] = b[z]});
+  }
+  return o;
+};
+</code></pre>
+<h1>¶ 1</h1>
+<pre><code class="javascript">greeting.es.hi = "hola";
+greeting.es.bye = "chao";
+...
+greeting.say(greeting.es.hi);
+</code></pre>
+<p><i class="fa fa-chevron-down" aria-hidden="true"></i></p>
+<pre><code class="javascript">greeting.say($$(greeting.es, {hi: 'hola', bye: 'chao'});
+</code></pre>
+<h1>¶ 2</h1>
+<pre><code class="javascript">var newOne = $$({}, otherObject) // Shallow copy</code></pre>
+<h1>¶ 3</h1>
+<pre><code class="javascript">var some = $$(giveMe, source, 'part1,part2') // get parts</code></pre>
+<h1>¶ 4</h1>
+<pre><code class="javascript">Do($$({}, $$('hola,bien', ['hi','bye','good'], '0,2')));</code></pre>
+<h1>¶ 5</h1>
+<pre><code class="javascript">Do($$({}, $$('hi, bye', {meet: 'hola', leave: 'chao', none : 'nada'}, 'meet, leave')));</code></pre>
+<h1>Real Example</h1>
+<h1># 1</h1>
+<pre><code class="javascript">zider.key.generate = function(f, v) {
+  var d = zider.dictionary(v, 'sign');
+  zider.fn('generateKey', // #1. KEY GENERATION
+    // On IE11, hash info is not necessary here but to sign to veryify later.
+    [$$({hash: {name: d.hash}}, d, 'name,modulusLength,publicExponent'), true, d.usage],
+    function (r, e) {     // #2. KEY EXPORTING
+      zider.fn('exportKey', ["jwk", r.privateKey],
+        function(r, e) {  // #3. KEY NEUTRALIZING.
+          // ArrayBuffer type : MSIE11, MOBILE WEBKIT BROWSERS / EXCEPT DESKTOP MODERNS
+          var jwk = (window.CryptoKey) ? r : JSON.parse(zider.convert.ab2str(r, true));
+          f($$($$({}, jwk, 'd,dp,dq,p,q,qi,n'), {v : d.v}), e);
+        }
+      );
+    }
+  );
+};</code></pre>
+<h1># 2</h1>
+<pre><code class="javascript">zider.key.set = function(s, m, v) { // RSA KEY TO LOAD
+  var d = zider.dictionary(v || s.v || 'v1', m);
+  // ★ IE11 : ERROR IF ADDING MORE PROPERTY
+  // ★ IE11 : kty, extractable, n, e | d dp dq e extractable kty n p q qi
+  // ★ MOBILE WEBKIT & IE11 KEYTYPE - [ARRAYBUFFER! of Stringified JSON]
+  var k = $$({}, {kty: "RSA", e: d.e, n: s.n});
+  ((document.documentMode == 11) && $$(k, {extractable: true})) || $$(k, d, 'key_ops,alg');
+  if (m == 'sign' || m == 'decrypt') $$(k, s, 'd,dp,dq,p,q,qi');
+  return (window.CryptoKey)? $$(k, {ext: true}) : zider.encode('str2ab', JSON.stringify(k)).buffer;
+};</code></pre>
+<h1># 3</h1>
+<pre><code class="javascript">zider.RSA = function(p, m, s, d, f, e) { // pseudoKey, method, signature, data, func, encode
+  var c = zider.dictionary(p.v, m);
+  zider.key.load(p, m, function(k){
+    if (m == "verify") zider.fn(m, [$$({}, c, 'name,hash'), k, s, d], f, e);
+    else zider.fn(m, [$$({}, c, 'name,hash'), k, s], d, f);
+  });
+};
+/*
+   RSA SHORT FUNCTION
+   zider.RSA.sign/verify/encrypt/decrypt
+*/
+$$(zider.RSA, function(e){
+  return function() {
+    var arg = Array.prototype.slice.call(arguments);
+    zider.RSA.apply(zider.RSA, arg.splice(1, 0, e) && arg);
+    return this;
+  };
+}, "sign,verify,encrypt,decrypt");</code></pre>
+<div id="footer">
+  oweb.io / oneiroi
+</div>
+
+</div>
+
+<script>
+</script>
+</body>
+</html>

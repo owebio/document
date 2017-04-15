@@ -88,39 +88,9 @@
 <div class="clr"></div>
 <h1>Zider Certification</h1>
 <div class="field">
-<!--
-  <fieldset>
-      <legend>Certification configuration :</legend>
-  version :
-  <select id="">
-    <option selected>v1</option>
-    <option disabled>v2</option>
-    <option disabled>v3</option>
-  </select>
-   · type :
-  <select>
-    <option selected>sole</option>
-    <option disabled>master</option>
-    <option disabled>slave</option>
-  </select>
-   · master-zid : <input disabled> <br>
-  object :
-  <select disabled>
-    <option selected>person</option>
-    <option>thing</option>
-    <option>site</option>
-  </select>
-   · method :
-    <input type="checkbox" checked disabled> all <input type="checkbox" disabled> login
-    <input type="checkbox" disabled> sign <br>
-  range :
-    <input type="checkbox" disabled> only some sites <br>
-    - above option is not ready, later it can be added.
-  </fieldset> -->
   <p class="field">
     <select id="opt-cert-ver">
-      <option value="v1">v1</option>
-      <option value="v2">v2</option>
+      <option value="v1">v1</option><option value="v2">v2</option>
     </select>
     • <input id="opt-cert-name" placeholder="NAME">
     • <input type="password" id="opt-cert-pass" placeholder="PASSWORD">
@@ -220,77 +190,58 @@
 
 <h1>Zider Compatibility</h1>
 <div>
-<table>
-<tr>
-  <th rowspan="2"> type </th>
-  <th colspan="7"> Desktop Browsers </th>
-  <th colspan="3"> Mobile </th>
-<tr>
-  <th>IE10</th><th>IE11</th><th>Edge</th>
-  <th>Chrome</th><th>F.F</th><th>Opera</th><th>Safari</th>
-  <th>Chr</th><th>Saf</th><th>IE11</th>
-</tr>
-<tr>
-  <th>All</th>
-  <td>X</td><td>O</td><td>O</td>
-  <td>O</td><td>O</td><td>O</td><td>?</td><td>O</td><td>O</td>
-  <td>?</td>
-</tr>
-<tr>
-  <th>V1</th>
-  <td>X</td><td>O</td><td>O</td>
-  <td>O</td><td>O</td><td>O</td><td>?</td><td>O</td><td>O</td>
-  <td>?</td>
-</tr>
-<tr>
-  <th>V2</th>
-  <td>X</td><td>O</td><td>O</td>
-  <td>O</td><td>O</td><td>O</td><td>?</td><td>½</td><td>½</td>
-  <td>?</td>
-</tr>
-</table>
-<ul class="desc">
-  <li> About two mobile browsers, tested on only iphone (iOS). </li>
-  <li> About desktop browsers, tested on only MS Windows (Win11). </li>
-  <li> Now mobile webkit browsers(chrome, safari) do not support SHA-256 on RSA-OAEP. </li>
-  <li> BCRYPT OF IE11 is slower than mobile browsers. </li>
-</ul>
+  <table>
+    <tr>
+      <th rowspan="2">type</th><th colspan="7">computer </th>
+      <th colspan="3"> mobile</th>
+    <tr>
+      <th>IE10</th><th>IE11</th><th>Edge</th><th>Chrome</th><th>F.F</th>
+      <th>Opera</th><th>Safari</th><th>Chr</th><th>Saf</th><th>IE11</th>
+    </tr>
+    <tr>
+      <th>All</th><td>X</td><td>O</td><td>O</td><td>O</td>
+      <td>O</td><td>O</td><td>?</td><td>O</td><td>O</td><td>?</td>
+    </tr>
+    <tr>
+      <th>V1</th><td>X</td><td>O</td><td>O</td><td>O</td>
+      <td>O</td><td>O</td><td>?</td><td>O</td><td>O</td><td>?</td>
+    </tr>
+    <tr>
+      <th>V2</th><td>X</td><td>O</td><td>O</td><td>O</td>
+      <td>O</td><td>O</td><td>?</td><td>½</td><td>½</td><td>?</td>
+    </tr>
+  </table>
+  <ul class="desc">
+    <li> About two mobile browsers, tested on only iphone (iOS). </li>
+    <li> About desktop browsers, tested on only MS Windows (Win11). </li>
+    <li> Now mobile webkit browsers(chrome, safari) do not support SHA-256 on RSA-OAEP. </li>
+    <li> BCRYPT OF IE11 is slower than mobile browsers. </li>
+  </ul>
 </div>
-
 <h1>Zider version table</h1>
 <div>
-<table>
-<tr>
-  <th rowspan="2">VER.</th>
-  <th colspan="4">RSA</th>
-  <th>AES</th><th>KEY</th>
-</tr>
-<tr>
-  <th>sign·verify</th><th>hash</th>
-  <th>en·decrypt</th><th>hash</th>
-  <th>en·decrypt</th><th>key derivation</th>
-</tr>
-<tr>
-  <th>v1</th>
-  <td>RSASSA-PKCS1-v1_5</td>
-  <td>256</td>
-  <td>RSA-OAEP</td>
-  <td>1</td>
-  <td>AES-CBC</td>
-  <td>BCRYPT</td>
-</tr>
-<tr>
-  <th>v2</th>
-  <td>〃</td>
-  <td>〃</td>
-  <td>〃</td>
-  <td>256</td>
-  <td>〃</td>
-  <td>〃</td>
-</tr>
-</table>
+  <table>
+  <tr>
+    <th rowspan="3">VER</th><th colspan="4">RSA</th>
+    <th>AES</th><th>KEY</th>
+  </tr>
+  <tr>
+    <th>sign</th><th rowspan="2">hash</th><th>encrypt</th>
+    <th rowspan="2">hash</th><th>encrypt</th><th rowspan="2">derivation</th>
+  </tr>
+  <tr>
+    <th>verify</th><th>decrypt</th><th>decrypt</th>
+  </tr>
+  <tr>
+    <th>v1</th><td>RSASSA-PKCS1-v1_5</td><td>256</td>
+    <td>RSA-OAEP</td><td>1</td><td>CBC</td><td>BCRYPT</td>
+  </tr>
+  <tr>
+    <th>v2</th><td>〃</td><td>〃</td><td>〃</td>
+    <td>256</td><td>〃</td><td>〃</td>
+  </tr>
+  </table>
 </div>
-
 <div id="footer">
   oweb.io / oneiroi
 </div>
@@ -386,9 +337,8 @@ $("#bt-aes-d-encrypt").click(function(){
   var base64url = zider.convert.base64url;
   var UTF8      = zider.convert.UTF8;
   var source    = JSON.parse($("#aes-d-source-text").val().trim());
-  var data      = base64url.decode(source.data);
   var vector    = source.vector;
-    zider.decrypt(data, vector, $("#aes-d-source-password").val().trim(), function(r, e){
+    zider.decrypt(source.data, $("#aes-d-source-password").val().trim(), vector, function(r, e){
       $("#aes-d-source-result").html((e || !r) ? "Wrong!" : UTF8.decode(base64url.decode(r)));
     }, 'base64url');
   }
