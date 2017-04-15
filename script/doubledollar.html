@@ -134,7 +134,7 @@ greeting.say(greeting.es.hi);
   // ★ MOBILE WEBKIT & IE11 KEYTYPE - [ARRAYBUFFER! of Stringified JSON]
   var k = {kty: "RSA", e: d.e, n: s.n};
   $$(k, {extractable: true}, undefined, (document.documentMode == 11) || false, d, 'key_ops,alg');
-  if (m == 'sign' || m == 'decrypt') $$(k, s, 'd,dp,dq,p,q,qi');
+  $$(k, s, 'd,dp,dq,p,q,qi', (m == 'sign' || m == 'decrypt') || false);
   return (window.CryptoKey)? $$(k, {ext: true}) : zider.encode('str2ab', JSON.stringify(k)).buffer;
 };</code></pre>
 <h1># 3</h1>
