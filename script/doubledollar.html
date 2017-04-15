@@ -36,7 +36,7 @@
   input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
   pre {border:8px solid #CFCFCF; font-size:12px; background:#3F3F3F;}
   pre code.hljs  {font-family:consolas, courier, monospace;;padding: 8px 4px}
-  #desc {font-size:12px;color: #9E9E9E}
+  .desc {font-size:12px;color: #9E9E9E}
   </style>
 </head>
 <body>
@@ -108,6 +108,9 @@ greeting.say(greeting.es.hi);
 <pre><code class="javascript">Do($$({}, $$('hola,bien', ['hi','bye','good'], '0,2')));</code></pre>
 <h1>¶ 5</h1>
 <pre><code class="javascript">Do($$({}, $$('hi, bye', {meet: 'hola', leave: 'chao', none : 'nada'}, 'meet, leave')));</code></pre>
+<h1>¶ 6</h1>
+<pre><code class="javascript">$$(Carlos, {meet: 'hola', leave: 'chao'}, 'meet', conditional || false, {do: 'hey'}, 'do')));</code></pre>
+<div class="desc"> Conditional expression should be finished with 'false'</div>
 <h1>Real Example</h1>
 <h1># 1</h1>
 <pre><code class="javascript">zider.key.generate = function(f, v) {
