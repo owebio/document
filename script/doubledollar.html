@@ -60,12 +60,6 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
       i.forEach(function(z) {
         var v = b(z, o); return v && (o[z] = v)
       }); break;
-    case 'object'   :
-      if (Array.isArray(b)) {
-        i.forEach(function(z, n) {
-          o[b[n]] = z;
-        break;
-      }
     case 'string'   :
       b = b.split(',');
       i.forEach(function(z, n) {
@@ -75,13 +69,15 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   }
   return o;
 };
+
 </script>
 <div id="zider">
 <div id="header">
   <div id="title">$$ - less code, less pain </div>
 </div>
 <h1><i class="fa fa-code" aria-hidden="true"></i> </h1>
-<pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
+<pre><code class="javascript">
+var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   if (!b) return o;
   if (typeof o == 'string') {
     var p = {}, s = j.split(',');
@@ -92,7 +88,7 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   if (arguments.length > 3 && !e) return $$({}, [o, c, t]);
   switch (typeof j) {
     case 'string'   : var i = j.split(','); break;
-    case 'object'   : var i = j; break; // array
+    case 'object'   : var i = j; break;
     default         : var i = Object.getOwnPropertyNames(b);
   }
   switch (typeof b) {
@@ -100,12 +96,6 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
       i.forEach(function(z) {
         var v = b(z, o); return v && (o[z] = v)
       }); break;
-    case 'object'   :
-      if (Array.isArray(b)) {
-        i.forEach(function(z, n) {
-          o[b[n]] = z;
-        break;
-      }
     case 'string'   :
       b = b.split(',');
       i.forEach(function(z, n) {
@@ -115,6 +105,7 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   }
   return o;
 };
+
 </code></pre>
 <p>Freely creating, copying, modifying and keeping part of object in any context.<br>
 <div class="desc">Stopping your bleeding time, sharpening your tool.</div>
@@ -190,7 +181,6 @@ $$(zider.RSA, function(e){
 }, "sign,verify,encrypt,decrypt");</code></pre>
 <h1> Updated </h1>
 <ul class="desc">
-  <li> 2017-04-16, added more way to attach each property and value by order. </li>
   <li> 2017-04-16, added using function as condition. </li>
   <li> 2017-04-16, don't need to add '|| false' to use condition. </li>
 </ul>
