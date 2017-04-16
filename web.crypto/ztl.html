@@ -15,7 +15,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   <style>
   html {min-width:400px; font-size:14px;}
-  h1 {font-size:1.45em;margin:1.25em 0}
+  h1 {font-size:1.45em;margin:1.25em 0;font-family:arial,sans-serif}
   h2 {font-size:1.35em}
   .output {position:relative;padding:10px;margin:1.5em 0;word-break:break-all;height:7em;overflow-y:auto;background:#f3f3f3;font-size:11px;font-family:consolas}
   .output.em1 {height:1.35em}
@@ -155,7 +155,7 @@ var ZTL = function(m, a, c, u) {
 <li>About JWK type, MSIE11 and Webkit mobile browsers(Chrome, Safari) show that the the type is 'ArrayBuffer', but on others mordern it is a normal object type of ECMA script that you can parse/stringify by JSON directly.</li>
 <li>For arguments of RSA, MSIE11 does not require hash info when you generate or do other for key. But you need to pass the hash info when you execute with key. (i.e, sign/verify/encrypt/decrypt).</li>
 <li>The RSA info of JWK is different, properties of MSIE11 might be less than others. If you add some more at random, it can cause errors.</li>
-<li>Till now the difference of how to support is three types. : MSIE11, Mobile Webkit browsers and other PC modern browsers (Edge, Chrome, Firefox, Opera,... ).
+<li>Till now the difference of how to support is three types that I checked. : (a) MSIE11, (b) Mobile Webkit browsers and (c) other PC modern browsers (Edge, Chrome, Firefox, Opera,... ).
 </ul>
 </div>
 <div id="footer">
