@@ -51,13 +51,27 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   var e = (typeof e == 'function') ?  e(o) : e;
   if (arguments.length > 3 && !e) return $$({}, [o, c, t]);
   switch (typeof j) {
-    case 'string'    : var i = j.split(','); break;
-    case 'object'    : var i = j; break;
-    default          : var i = Object.getOwnPropertyNames(b);
+    case 'string'   : var i = j.split(','); break;
+    case 'object'   : var i = j; break;
+    default         : var i = Object.getOwnPropertyNames(b);
   }
   switch (typeof b) {
-    case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-    default          : i.forEach(function(z,s,a) {o[z] = b[z]});
+    case 'function' :
+      i.forEach(function(z) {
+        var v = b(z, o); return v && (o[z] = v)
+      }); break;
+    case 'object'   :
+      if (Array.isArray(b)) {
+        i.forEach(function(z, n) {
+          o[b[n]] = z;
+        break;
+      }
+    case 'string'   :
+      b = b.split(',');
+      i.forEach(function(z, n) {
+        o[b[n]] = z;
+      }); break;
+    default         : i.forEach(function(z) {o[z] = b[z]});
   }
   return o;
 };
@@ -77,13 +91,27 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
   var e = (typeof e == 'function') ?  e(o) : e;
   if (arguments.length > 3 && !e) return $$({}, [o, c, t]);
   switch (typeof j) {
-    case 'string'    : var i = j.split(','); break;
-    case 'object'    : var i = j; break;
-    default          : var i = Object.getOwnPropertyNames(b);
+    case 'string'   : var i = j.split(','); break;
+    case 'object'   : var i = j; break; // array
+    default         : var i = Object.getOwnPropertyNames(b);
   }
   switch (typeof b) {
-    case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-    default          : i.forEach(function(z,s,a) {o[z] = b[z]});
+    case 'function' :
+      i.forEach(function(z) {
+        var v = b(z, o); return v && (o[z] = v)
+      }); break;
+    case 'object'   :
+      if (Array.isArray(b)) {
+        i.forEach(function(z, n) {
+          o[b[n]] = z;
+        break;
+      }
+    case 'string'   :
+      b = b.split(',');
+      i.forEach(function(z, n) {
+        o[b[n]] = z;
+      }); break;
+    default         : i.forEach(function(z) {o[z] = b[z]});
   }
   return o;
 };
@@ -162,6 +190,8 @@ $$(zider.RSA, function(e){
 }, "sign,verify,encrypt,decrypt");</code></pre>
 <h1> Updated </h1>
 <ul class="desc">
+  <li> 2017-04-16, added more way to attach each property and value by order. </li>
+  <li> 2017-04-16, added using function as condition. </li>
   <li> 2017-04-16, don't need to add '|| false' to use condition. </li>
 </ul>
 
