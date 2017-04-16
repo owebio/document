@@ -35,30 +35,30 @@
   input {width:7em}
   input.full-line {width:100%;box-sizing:border-box;margin:0;display:block;}
   pre {border:8px solid #CFCFCF; font-size:12px; background:#3F3F3F;}
-  pre code.hljs  {font-family:consolas, courier, monospace;;padding: 8px 4px}
+  pre code.hljs  {font-family:consolas, courier, monospace;;padding: 12px 4px}
   .desc {font-size:12px;color: #9E9E9E}
   </style>
 </head>
 <body>
 <script>
 var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
-  if (e !== false) {
-    if (!b) return o;
-    if (typeof o == 'string') {
-      var p = {}, s = j.split(',');
-       o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
-      var o = {}, b = p, j = undefined;
-    }
-    switch (typeof j) {
-      case 'string'    : var i = j.split(','); break;
-      case 'object'    : var i = j; break;
-      default          : var i = Object.getOwnPropertyNames(b);
-    }
-    switch (typeof b) {
-      case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-      default          : i.forEach(function(z,s,a) {o[z] = b[z]});
-    }
-  } else $$({}, [o, c, t]);
+  if (!b) return o;
+  if (typeof o == 'string') {
+    var p = {}, s = j.split(',');
+     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+    var o = {}, b = p, j = undefined;
+  }
+  var e = (typeof e == 'function') ?  e(o) : e;
+  if (arguments.length > 3 && !e) return $$({}, [o, c, t]);
+  switch (typeof j) {
+    case 'string'    : var i = j.split(','); break;
+    case 'object'    : var i = j; break;
+    default          : var i = Object.getOwnPropertyNames(b);
+  }
+  switch (typeof b) {
+    case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+    default          : i.forEach(function(z,s,a) {o[z] = b[z]});
+  }
   return o;
 };
 </script>
@@ -68,30 +68,30 @@ var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
 </div>
 <h1><i class="fa fa-code" aria-hidden="true"></i> </h1>
 <pre><code class="javascript">var $$ = /*window.$$ ||*/ function (o, b, j, e, c, t) {
-  if (e !== false) {
-    if (!b) return o;
-    if (typeof o == 'string') {
-      var p = {}, s = j.split(',');
-       o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
-      var o = {}, b = p, j = undefined;
-    }
-    switch (typeof j) {
-      case 'string'    : var i = j.split(','); break;
-      case 'object'    : var i = j; break;
-      default          : var i = Object.getOwnPropertyNames(b);
-    }
-    switch (typeof b) {
-      case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
-      default          : i.forEach(function(z,s,a) {o[z] = b[z]});
-    }
-  } else $$({}, [o, c, t]);
+  if (!b) return o;
+  if (typeof o == 'string') {
+    var p = {}, s = j.split(',');
+     o.split(',').forEach(function(e, n) {p[e] = b[s[n]]});
+    var o = {}, b = p, j = undefined;
+  }
+  var e = (typeof e == 'function') ?  e(o) : e;
+  if (arguments.length > 3 && !e) return $$({}, [o, c, t]);
+  switch (typeof j) {
+    case 'string'    : var i = j.split(','); break;
+    case 'object'    : var i = j; break;
+    default          : var i = Object.getOwnPropertyNames(b);
+  }
+  switch (typeof b) {
+    case 'function'  : i.forEach(function(z) {var v = b(z, o); return v && (o[z] = v)}); break;
+    default          : i.forEach(function(z,s,a) {o[z] = b[z]});
+  }
   return o;
 };
 </code></pre>
 <p>Freely creating, copying, modifying and keeping part of object in any context.<br>
 <div class="desc">Stopping your bleeding time, sharpening your tool.</div>
 </p>
-<h1>¶ 1. Setting and using in one go. </h1>
+<h1>Setting and using in one go. </h1>
 <pre><code class="javascript">greeting.es.hi = "hola";
 greeting.es.bye = "chao";
 ...
@@ -100,18 +100,18 @@ greeting.say(greeting.es.hi);
 <p><i class="fa fa-chevron-down" aria-hidden="true"></i></p>
 <pre><code class="javascript">greeting.say($$(greeting.es, {hi: 'hola', bye: 'chao'}).hi);
 </code></pre>
-<h1>¶ 2. Shallow copying. </h1>
+<h1>Shallow copying. </h1>
 <pre><code class="javascript">var newOne = $$({}, otherObject) // Shallow copy</code></pre>
-<h1>¶ 3. Taking some parts of other's. </h1>
+<h1>Taking some parts of other's. </h1>
 <pre><code class="javascript">Do($$(giveMe, source, 'part1,part2')); // get parts and continue coding</code></pre>
-<h1>¶ 4. Building property and value from array.</h1>
+<h1>Building property and value from array.</h1>
 <pre><code class="javascript">$$({}, $$('hola,bien', ['hi','bye','good'], '0,2'));
 // => {hola : 'hi', bien : 'good'}</code></pre>
-<h1>¶ 5. Setting value with changed prorpety name</h1>
+<h1>Setting value with changed prorpety name</h1>
 <pre><code class="javascript">Do($$({}, $$('hi, bye', {meet: 'hola', leave: 'chao', none : 'nada'}, 'meet, leave')));</code></pre>
-<h1>¶ 6. Conditional excution.</h1>
-<pre><code class="javascript">$$(Carlos, {meet: 'hola', leave: 'chao'}, 'meet', conditional || false, {do: 'hey'}, 'do')));</code></pre>
-<div class="desc"> Conditional expression should be finished with 'false'<br> If the condition expression is true (or undefined), former part is excuted. <br>Only if false, latter part is excuted.</div>
+<h1>Conditional excution.</h1>
+<pre><code class="javascript">$$(Carlos, {meet: 'hola', leave: 'chao'}, 'meet', <i>conditional expression</i> , {do: 'hey'}, 'do')));</code></pre>
+
 <h1>Real Example</h1>
 <h1># 1</h1>
 <pre><code class="javascript">zider.key.generate = function(f, v) {
@@ -137,8 +137,8 @@ greeting.say(greeting.es.hi);
   // ★ IE11 : kty, extractable, n, e | d dp dq e extractable kty n p q qi
   // ★ MOBILE WEBKIT & IE11 KEYTYPE - [ARRAYBUFFER! of Stringified JSON]
   var k = {kty: "RSA", e: d.e, n: s.n};
-  $$(k, {extractable: true}, undefined, (document.documentMode == 11) || false, d, 'key_ops,alg');
-  $$(k, s, 'd,dp,dq,p,q,qi', (m == 'sign' || m == 'decrypt') || false);
+  $$(k, {extractable: true}, undefined, window.msCrypto, d, 'key_ops,alg');
+  $$(k, s, 'd,dp,dq,p,q,qi', (m == 'sign' || m == 'decrypt'));
   return (window.CryptoKey)? $$(k, {ext: true}) : zider.encode('str2ab', JSON.stringify(k)).buffer;
 };</code></pre>
 <h1># 3</h1>
@@ -160,6 +160,11 @@ $$(zider.RSA, function(e){
     return this;
   };
 }, "sign,verify,encrypt,decrypt");</code></pre>
+<h1> Updated </h1>
+<ul class="desc">
+  <li> 2017-04-16, don't need to add '|| false' to use condition. </li>
+</ul>
+
 <div id="footer">
   oweb.io / oneiroi
 </div>
