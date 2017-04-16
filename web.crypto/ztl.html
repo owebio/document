@@ -152,9 +152,9 @@ var ZTL = function(m, a, c, u) {
 
 <ul class="desc">
 <li>To digest with SHA-1, MSIE11 does not support but RSA-OAEP with SHA-1 works on IE11.</li>
-<li>About JWK type, MSIE11 and Webkit mobile browsers(Chrome, Safari) show that the type of it is 'ArrayBuffer', but others mordern are normal object type of ECMA script that you can parse/stringify by JSON.</li>
+<li>About JWK type, MSIE11 and Webkit mobile browsers(Chrome, Safari) show that the the type is 'ArrayBuffer', but on others mordern it is a normal object type of ECMA script that you can parse/stringify by JSON directly.</li>
 <li>For arguments of RSA, MSIE11 does not require hash info when you generate or do other for key. But you need to pass the hash info when you execute with key. (i.e, sign/verify/encrypt/decrypt).</li>
-<li>The RSA info of JWK is different, properties of MSIE11 is less than others. If you add some in random, it might cause errors.</li>
+<li>The RSA info of JWK is different, properties of MSIE11 is less than others. If you add some more at random, it might cause errors.</li>
 <li>Till now the difference of how to support is three types. : MSIE11, Mobile Webkit browsers and other PC modern browsers (Edge, Chrome, Firefox, Opera,... ).
 </ul>
 </div>
