@@ -39,6 +39,8 @@
   pre code.hljs  {font-family:consolas, courier, monospace;;padding: 8px 4px}
   .desc {font-size:12px;color: #9E9E9E}
   iframe {box-sizing:border-box;border:8px solid #E7E7E7}
+  ul {margin:1em 0 1em 1em;padding:0;}
+  li {margin:0;padding:0;}
   </style>
 </head>
 <body>
@@ -145,6 +147,17 @@ var ZTL = function(m, a, c, u) {
 <h1><i class="fa fa-bolt" aria-hidden="true"></i> Example </h1>
 <iframe width="100%" height="300" src="//jsfiddle.net/L5m92ac3/4/embedded/js,result/?bodyColor=fff" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
+<h1><i class="fa fa-shower" aria-hidden="true"></i> misc.</h1>
+<div>Probably if it's not working, the part is different that you might know. It depends on browsers how to support and what to support. i.e, algorithm, each argument to algorithm, result type of im/exporting by JWK.
+
+<ul class="desc">
+<li>To digest with SHA-1, MSIE11 does not support but RSA-OAEP with SHA-1 works on IE11.</li>
+<li>About JWK type, MSIE11 and Webkit mobile browsers(Chrome, Safari) show that the type of it is 'ArrayBuffer', but others mordern are normal object type of ECMA script that you can parse/stringify by JSON.</li>
+<li>For arguments of RSA, MSIE11 does not require hash info when you generate or do other for key. But you need to pass the hash info when you execute with key. (i.e, sign/verify/encrypt/decrypt).</li>
+<li>The RSA info of JWK is different, properties of MSIE11 is less than others. If you add some in random, it might cause errors.</li>
+<li>Till now the difference of how to support is three types. : MSIE11, Mobile Webkit browsers and other PC modern browsers (Edge, Chrome, Firefox, Opera,... ).
+</ul>
+</div>
 <div id="footer">
   oweb.io / oneiroi
 </div>
