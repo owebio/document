@@ -65,12 +65,7 @@ var ZTL = function(m, a, c) {
   <div id="title">ZTL.js - Normalizing crypto.subtle  </div>
 </div>
 <h1><i class="fa fa-code" aria-hidden="true"></i> Code</h1>
-<pre><code class="javascript">// ### Normailizing Web cryptography subtle
-// [Normalization] New spec [Promise] vs old spec [Event Object, IE11]
-// [Minimization ] then(oncomplete) and catch(onerror) as one functon.
-// [IE11 BUG     ] IE11 never fires 'onerror', use try-catch statement.
-// [Callback Func] cbFunc(value, ifError);
-var ZTL = function(m, a, c, u) {
+<pre><code class="javascript">var ZTL = function(m, a, c) {
   var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
   var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
   try { // FIXING IE 11 BUG : onerror, never expect it!
