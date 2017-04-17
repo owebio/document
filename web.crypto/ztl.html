@@ -45,7 +45,7 @@
 </head>
 <body>
 <script>
-var ZTL = function(m, a, c, u) {
+var ZTL = function(m, a, c) {
   var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
   var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
   try { // FIXING IE 11 BUG : onerror, never expect it!
@@ -55,9 +55,9 @@ var ZTL = function(m, a, c, u) {
       return c.call(x, _, n);
     };
     var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
-    if (x.then) return x.then(f).catch(function(n) {f(u, n)});
+    if (x.then) return x.then(f).catch(function(n) {f(!1, n)});
     return x.oncomplete = f;
-  } catch (n) {f(u, n)};
+  } catch (n) {f(!1, n)};
 };
 </script>
 <div id="zider">
@@ -80,9 +80,9 @@ var ZTL = function(m, a, c, u) {
       return c.call(x, _, n);
     };
     var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
-    if (x.then) return x.then(f).catch(function(n) {f(u, n)});
+    if (x.then) return x.then(f).catch(function(n) {f(!1, n)});
     return x.oncomplete = f;
-  } catch (n) {f(u, n)};
+  } catch (n) {f(!1, n)};
 };
 </code></pre>
 <p>USING CRYPTO SUBTLE FOR MORE BROWSERS.<br>
@@ -101,9 +101,6 @@ var ZTL = function(m, a, c, u) {
 </tr>
 <tr>
   <th> c </th><td>function</td><td>call back function (result, error)</td>
-</tr>
-<tr>
-  <th> u </th><td>undefined</td><td>Don't set any to this.</td>
 </tr>
 </table>
 <h1><i class="fa fa-coffee" aria-hidden="true"></i> Something different? </h1>
