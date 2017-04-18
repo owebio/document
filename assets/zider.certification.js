@@ -43,7 +43,6 @@ zider.certification.create = function(password, name, func, version) {
       // 2. hashdata, func, algo, encode
       zider.hash(signed, function(hid){
         cert.hid = hid.substring(0,24);
-        console.log(hid, cert.hid, cert.hid.length);
         // 3. encrypt
         var _data = convert.str2ab(JSON.stringify(cert.data), true);
         zider.encrypt(_data, password, function(encrypted){

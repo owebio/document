@@ -47,14 +47,14 @@
 <script>
 var ZTL = function(m, a, c) {
   var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
-  var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
-  try { // FIXING IE 11 BUG : onerror, never expect it!
+  var subtle = crypt.subtle  || crypt.webkitSubtle;
+  try {
     var f = function(v, n) {
       if (n) console.log('ZTL error : [' + m + ']', n, a);
       var _ = (v && v.target && v.target.result/*IE11*/) || v;
       return c.call(x, _, n);
     };
-    var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
+    var x = subtle[m].apply(subtle, a);
     if (x.then) return x.then(f).catch(function(n) {f(!1, n)});
     return x.oncomplete = f;
   } catch (n) {f(!1, n)};
@@ -68,13 +68,13 @@ var ZTL = function(m, a, c) {
 <pre><code class="javascript">var ZTL = function(m, a, c) {
   var crypt  = window.crypto || window.msCrypto || window.webitCrypto;
   var subtle = crypt.subtle  || crypt.webkitSubtle; // webkitSubtle - only mobile;
-  try { // FIXING IE 11 BUG : onerror, never expect it!
+  try {
     var f = function(v, n) {
       if (n) console.log('ZTL error : [' + m + ']', n, a);
       var _ = (v && v.target && v.target.result/*IE11*/) || v;
       return c.call(x, _, n);
     };
-    var x = subtle[m].apply(subtle, a); // subtle! or Error! :)
+    var x = subtle[m].apply(subtle, a);
     if (x.then) return x.then(f).catch(function(n) {f(!1, n)});
     return x.oncomplete = f;
   } catch (n) {f(!1, n)};
